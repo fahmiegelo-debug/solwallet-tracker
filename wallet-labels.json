@@ -270,15 +270,15 @@
       "name": "Jito Tip Account 3",
       "tag": "program"
     },
-    "ADaUMid9yfUytqMBgopwjb2DTLSokTSzL1QLEedsdRx5": {
+    "ADaUMid9yfUytqMBgopwjb2DTLSokTSzL1zt6iGPaS49": {
       "name": "Jito Tip Account 4",
       "tag": "program"
     },
-    "DfXygSm4jCyBCdRwQB3xy5xjzDvxnbf3CScsGQrqF4M5": {
+    "DfXygSm4jCyNCybVYYK6DwvWqjKee8pbDmJGcLWNDXjh": {
       "name": "Jito Tip Account 5",
       "tag": "program"
     },
-    "ADuUkR4vqLUMWXxW9gh6D6L8pivKeVZjgYCJEgB3FQYi": {
+    "ADuUkR4vqLUMWXxW9gh6D6L8pMSawimctcNZ5pGwDcEt": {
       "name": "Jito Tip Account 6",
       "tag": "program"
     },
@@ -286,7 +286,7 @@
       "name": "Jito Tip Account 7",
       "tag": "program"
     },
-    "3AVi9Tg9Uo68tJfuvoKvqKNWKcxxSNhihzpiYdHrYHNc": {
+    "3AVi9Tg9Uo68tJfuvoKvqKNWKkC5wPdSSdeBnizKZ6jT": {
       "name": "Jito Tip Account 8",
       "tag": "program"
     },
@@ -655,5 +655,6 @@
       "tag": "token"
     }
   },
-  "_extras": "Manual additions: 8 Jito tip accounts (validator MEV pool), JTO/jitoSOL, NextBlock/Helius/Temporal bots, Meteora DLMM/DAMM, Orca, Raydium CLMM/CPMM, Lifinity, Phoenix, OpenBook, Drift, Mango v4, Jupiter Perps/LO/DCA, Squads, Marinade, Solend, Kamino, Pump.fun, Tensor, Magic Eden"
+  "_extras": "Manual additions: 8 Jito tip accounts (validator MEV pool), JTO/jitoSOL, NextBlock/Helius/Temporal bots, Meteora DLMM/DAMM, Orca, Raydium CLMM/CPMM, Lifinity, Phoenix, OpenBook, Drift, Mango v4, Jupiter Perps/LO/DCA, Squads, Marinade, Solend, Kamino, Pump.fun, Tensor, Magic Eden",
+  "_jito_source": "https://jito-foundation.gitbook.io/mev/mev-payment-and-distribution/on-chain-addresses (via rotki/rotki)"
 }
