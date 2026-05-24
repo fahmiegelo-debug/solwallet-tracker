@@ -56,14 +56,17 @@ python3 -m http.server 8000
 
 ## Pattern heuristics
 
-| Pattern | Trigger |
-|---------|---------|
-| **CEX** | Address matches known CEX hot wallet database |
-| **Protocol** | Address matches known DEX/AMM/bridge |
-| **Bundler** | 3+ inflow tx, 0 outflow, all within ~50 slots |
-| **Funder** | Single large inflow >5 SOL, 0 outflow |
-| **Drain** | Receives >50% of target's total outflow |
-| **Cluster** | Shares 5+ signatures (frequent co-occurrence) |
+Heuristics **only apply to unknown user wallets**. Known infrastructure (CEX hot wallets, DEX programs, Jito tip accounts, system programs) is excluded — Jito tips are paid by every MEV bundle and would otherwise trigger false bundler/drain flags.
+
+| Pattern | Trigger | Applies to |
+|---------|---------|------------|
+| **CEX** | Address matches known CEX hot wallet database | Any |
+| **Protocol** | Raydium, Jupiter, Orca, Wormhole, etc. | Any |
+| **MEV** | Jito tip accounts, NextBlock, Helius nominal, Temporal | Any |
+| **Bundler** | 3+ inflow tx, 0 outflow, all within ~50 slots | User wallets only |
+| **Funder** | Single large inflow >5 SOL, 0 outflow | User wallets only |
+| **Drain** | Receives >50% of target's total outflow **to user wallets** | User wallets only |
+| **Cluster** | Shares 5+ signatures (frequent co-occurrence) | User wallets only |
 
 ## Known-label database
 

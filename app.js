@@ -32,6 +32,24 @@ const KNOWN_LABELS = {
   'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA': { name: 'Token Program', kind: 'system' },
   '11111111111111111111111111111111': { name: 'System Program', kind: 'system' },
   'ComputeBudget111111111111111111111111111111': { name: 'Compute Budget', kind: 'system' },
+
+  // Jito MEV tip accounts (8 official) — bukan bundler wallet, ini infra validator tip pool
+  '96gYZGLnJYVFmbjzopPSU6QiEV5fGqZNyN9nmNhvrZU5': { name: 'Jito Tip 1', kind: 'mev' },
+  'HFqU5x63VTqvQss8hp11i4wVV8bD44PvwucfZ2bU7gRe': { name: 'Jito Tip 2', kind: 'mev' },
+  'Cw8CFyM9FkoMi7K7Crf6HNQqf4uEMzpKw6QNghXLvLkY': { name: 'Jito Tip 3', kind: 'mev' },
+  'ADaUMid9yfUytqMBgopwjb2DTLSokTSzL1zt6iGPaS49': { name: 'Jito Tip 4', kind: 'mev' },
+  'DfXygSm4jCyNCybVYYK6DwvWqjKee8pbDmJGcLWNDXjh': { name: 'Jito Tip 5', kind: 'mev' },
+  'ADuUkR4vqLUMWXxW9gh6D6L8pivKeVBBjNhVgNjCggAk': { name: 'Jito Tip 6', kind: 'mev' },
+  'DttWaMuVvTiduZRnguLF7jNxTgiMBZ1hyAumKUiL2KRL': { name: 'Jito Tip 7', kind: 'mev' },
+  '3AVi9Tg9Uo68tJfuvoKvqKNWKkC5wPdSSdeBnizKZ6jT': { name: 'Jito Tip 8', kind: 'mev' },
+  // Jito ecosystem
+  'jtojtomepa8beP8AuQc6eXt5FriJwfNVBz8VJbBVxn3': { name: 'Jito Token (JTO)', kind: 'protocol' },
+  'J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn': { name: 'jitoSOL', kind: 'protocol' },
+  // Other infra & MEV
+  'noopb9bkMVfRPU8AsbpTUg8AQkHtKwMYZiFUjNRtMmV': { name: 'Helius Nominal', kind: 'mev' },
+  'temporalnoo1d3dECtzcsp6ZN7NRWhmUFSttMD3FnD4j': { name: 'Temporal Bot', kind: 'mev' },
+  'NextbLockBwx9MakeC9X9PfP1RY29kPVDpNhT7qnmW': { name: 'NextBlock', kind: 'mev' },
+  '0xFLAGCv1gaiPHnQK5yiUiQAitH4eGbQp2nDYvhVXp': { name: 'FlagToken', kind: 'protocol' },
 };
 
 const COLORS = {
@@ -42,6 +60,7 @@ const COLORS = {
   cex:      '#ff6ec7',
   drain:    '#ff4d6d',
   protocol: '#a78bfa',
+  mev:      '#ffd54f',
   system:   '#5e677d',
 };
 
@@ -240,29 +259,41 @@ async function getDemoData(addr) {
 function classifyWallet(w, target, allWallets) {
   const labels = [];
   const known = KNOWN_LABELS[w.addr];
+
+  // Tag known infrastructure first
   if (known) {
     if (known.kind === 'cex') labels.push({ tag: 'cex', label: 'CEX', name: known.name });
     else if (known.kind === 'dex' || known.kind === 'protocol') labels.push({ tag: 'protocol', label: known.kind.toUpperCase(), name: known.name });
+    else if (known.kind === 'mev') labels.push({ tag: 'mev', label: 'MEV', name: known.name + ' — validator tip / MEV infra' });
     else labels.push({ tag: 'system', label: 'SYS', name: known.name });
   }
 
-  // Bundler heuristic: 3+ inflow tx within close slot range (originated in same slot batch)
-  if (w.inCount >= 3 && w.outCount === 0 && (w.lastSlot - w.firstSlot) < 50) {
-    labels.push({ tag: 'bundler', label: 'BUNDLER', name: 'Funded the target in burst' });
-  }
-  // Funder heuristic: large single inflow with no outflow
-  if (w.in > 5 && w.inCount <= 2 && w.outCount === 0) {
-    labels.push({ tag: 'funder', label: 'FUNDER', name: 'Sent SOL to target only' });
-  }
-  // Drain heuristic: target sent >50% of total volume here
-  const totalOut = allWallets.reduce((s, x) => s + x.out, 0);
-  if (totalOut > 0 && w.out / totalOut > 0.5 && w.out > 1) {
-    labels.push({ tag: 'drain', label: 'DRAIN', name: 'Received >50% of outflow' });
-  }
-  // Cluster heuristic: appears in many same sigs as target's other counterparties
-  const sigsShared = w.sigs.length;
-  if (sigsShared >= 5 && !known) {
-    labels.push({ tag: 'cluster', label: 'CLUSTER', name: 'Part of frequent group' });
+  // CRITICAL: bundler/funder/drain heuristics ONLY apply to unknown user wallets,
+  // not to CEX hot wallets, DEX programs, MEV tip accounts, or system programs.
+  // Jito tip transfers are infrastructure activity — every MEV bundle pays them.
+  const isInfrastructure = !!known;
+
+  if (!isInfrastructure) {
+    // Bundler heuristic: 3+ inflow tx within close slot range (originated in same slot batch)
+    if (w.inCount >= 3 && w.outCount === 0 && (w.lastSlot - w.firstSlot) < 50) {
+      labels.push({ tag: 'bundler', label: 'BUNDLER', name: 'Funded the target in burst' });
+    }
+    // Funder heuristic: large single inflow with no outflow
+    if (w.in > 5 && w.inCount <= 2 && w.outCount === 0) {
+      labels.push({ tag: 'funder', label: 'FUNDER', name: 'Sent SOL to target only' });
+    }
+    // Drain heuristic: target sent >50% of total volume here, exclude infra outflow from denominator
+    const totalOutToUserWallets = allWallets
+      .filter(x => !KNOWN_LABELS[x.addr])
+      .reduce((s, x) => s + x.out, 0);
+    if (totalOutToUserWallets > 0 && w.out / totalOutToUserWallets > 0.5 && w.out > 1) {
+      labels.push({ tag: 'drain', label: 'DRAIN', name: 'Received >50% of outflow to user wallets' });
+    }
+    // Cluster heuristic: appears in many same sigs as target's other counterparties
+    const sigsShared = w.sigs.length;
+    if (sigsShared >= 5) {
+      labels.push({ tag: 'cluster', label: 'CLUSTER', name: 'Part of frequent group' });
+    }
   }
 
   return labels;
@@ -272,9 +303,11 @@ function pickColor(labels, kind) {
   for (const l of labels) {
     if (l.tag === 'drain') return COLORS.drain;
     if (l.tag === 'cex') return COLORS.cex;
+    if (l.tag === 'mev') return COLORS.mev;
     if (l.tag === 'bundler') return COLORS.bundler;
     if (l.tag === 'funder') return COLORS.bundler;
     if (l.tag === 'protocol') return COLORS.protocol;
+    if (l.tag === 'system') return COLORS.system;
     if (l.tag === 'cluster') return '#a78bfa';
   }
   return kind === 'in' ? COLORS.inflow : COLORS.outflow;
@@ -397,12 +430,16 @@ function renderTargetSidebar(target, wallets) {
   const funderCount = allLabels.filter(l => l.tag === 'funder').length;
   const cexCount = allLabels.filter(l => l.tag === 'cex').length;
   const drainCount = allLabels.filter(l => l.tag === 'drain').length;
+  const mevCount = allLabels.filter(l => l.tag === 'mev').length;
+  const protocolCount = allLabels.filter(l => l.tag === 'protocol').length;
 
   const insights = [];
   if (bundlerCount > 0) insights.push({ kind: 'warn', icon: '📦', text: `<strong>${bundlerCount} bundler-pattern wallet${bundlerCount > 1 ? 's' : ''}</strong> sent SOL to this address in tight burst windows. Often indicates coordinated funding.` });
   if (funderCount > 0) insights.push({ kind: 'info', icon: '💰', text: `<strong>${funderCount} pure funder${funderCount > 1 ? 's' : ''}</strong> sent SOL only (no return). Could be deployer wallets or sybil farm.` });
   if (cexCount > 0) insights.push({ kind: 'info', icon: '🏦', text: `<strong>${cexCount} CEX hot wallet${cexCount > 1 ? 's' : ''}</strong> in the graph. Indicates fiat on/off-ramp.` });
-  if (drainCount > 0) insights.push({ kind: 'alert', icon: '🚨', text: `<strong>${drainCount} drain destination${drainCount > 1 ? 's' : ''}</strong> received over 50% of total outflow. Possible exit/rug pattern.` });
+  if (drainCount > 0) insights.push({ kind: 'alert', icon: '🚨', text: `<strong>${drainCount} drain destination${drainCount > 1 ? 's' : ''}</strong> received over 50% of total outflow to user wallets. Possible exit/rug pattern.` });
+  if (mevCount > 0) insights.push({ kind: 'info', icon: '⚡', text: `<strong>${mevCount} MEV / Jito tip account${mevCount > 1 ? 's' : ''}</strong> — wallet uses MEV bundles or transaction acceleration. Not a counterparty, just infrastructure.` });
+  if (protocolCount > 0) insights.push({ kind: 'info', icon: '⚙️', text: `<strong>${protocolCount} DEX/protocol interaction${protocolCount > 1 ? 's' : ''}</strong> (Raydium, Jupiter, Wormhole, etc). Active trader profile.` });
   if (uniqueCounter > 30) insights.push({ kind: 'info', icon: '🌐', text: `Highly connected wallet — ${uniqueCounter} unique counterparties. Likely active trader, MM, or hub.` });
   if (insights.length === 0) insights.push({ kind: 'info', icon: '✨', text: 'No suspicious cluster pattern detected from sampled history. Looks like normal activity.' });
 
@@ -541,7 +578,7 @@ function renderWalletDetail(node) {
         ${labels.length === 0 ? '<div class="insight info"><div class="insight-icon">🤷</div><div class="insight-text">No automated label triggered for this wallet. Open it on Solscan or GMGN for deeper inspection.</div></div>' : ''}
         ${labels.map(l => `
           <div class="insight ${l.tag === 'drain' ? 'alert' : (l.tag === 'bundler' ? 'warn' : 'info')}">
-            <div class="insight-icon">${l.tag === 'cex' ? '🏦' : l.tag === 'bundler' ? '📦' : l.tag === 'funder' ? '💰' : l.tag === 'drain' ? '🚨' : l.tag === 'protocol' ? '⚙️' : l.tag === 'cluster' ? '🕸️' : '🏷️'}</div>
+            <div class="insight-icon">${l.tag === 'cex' ? '🏦' : l.tag === 'bundler' ? '📦' : l.tag === 'funder' ? '💰' : l.tag === 'drain' ? '🚨' : l.tag === 'protocol' ? '⚙️' : l.tag === 'mev' ? '⚡' : l.tag === 'system' ? '🛠️' : l.tag === 'cluster' ? '🕸️' : '🏷️'}</div>
             <div class="insight-text"><strong>${l.label}</strong> — ${l.name}</div>
           </div>
         `).join('')}
