@@ -439,6 +439,12 @@ function renderTargetSidebar(target, wallets) {
     <div class="section">
       <div class="section-title">Target Wallet <span class="badge">TRACED</span></div>
       <div class="target-card">
+        ${(() => {
+          const targetLabel = getLabel(target);
+          return targetLabel
+            ? `<div style="margin-bottom: 10px; font-size: 14px; font-weight: 700; color: var(--text-0)">🏷️ ${targetLabel.name} <span class="tag tag-${targetLabel.tag}" style="margin-left: 6px">${targetLabel.tag.toUpperCase()}</span></div>`
+            : '';
+        })()}
         <div class="target-addr">${target} <button class="copy-btn" data-copy="${target}">Copy</button></div>
         <div class="target-meta">
           <div class="meta-cell"><div class="meta-label">Inflow</div><div class="meta-value" style="color: var(--accent)">+${fmtSOL(inflow)}</div></div>
@@ -657,6 +663,10 @@ async function trackWallet(addr) {
       alert('No SOL/SPL transfers found in sampled history.\n\nThe wallet might only call programs without value transfer, or RPC may have rate-limited the request.');
       $('btn-track').disabled = false;
       return;
+    }
+
+    if (allTransfers.length < 5 && sigs.length >= PARSE_TX_LIMIT) {
+      console.warn('Public RPC returned very few parseable transfers. Wallet may be rate-limited or extremely high-volume.');
     }
 
     setStatus('Building cluster graph…');
