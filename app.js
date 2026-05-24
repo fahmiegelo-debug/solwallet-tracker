@@ -169,7 +169,46 @@ function parseTransfers(tx, target) {
   const post = tx.meta.postBalances || [];
   const fee = tx.meta.fee || 0;
 
-  // Native SOL deltas
+  // ── PRE-SCAN: identify self-owned token accounts in this tx ──
+  // These are temporary/utility accounts owned by `target` — transfers to/from them
+  // are NOT counterparty interactions. Common patterns:
+  //   • createIdempotent / createAccount with source=target → temp WSOL ATA, NFT vault, etc.
+  //   • closeAccount with destination=target → ATA being closed back to target
+  //   • transferChecked between target-owned token accounts (e.g., wrap SOL flow)
+  const selfOwnedAccounts = new Set();
+  selfOwnedAccounts.add(target);
+
+  const allIxs = [
+    ...(tx.transaction.message.instructions || []),
+    ...((tx.meta.innerInstructions || []).flatMap(x => x.instructions || [])),
+  ];
+
+  for (const ix of allIxs) {
+    if (!ix.parsed) continue;
+    const t = ix.parsed.type;
+    const info = ix.parsed.info || {};
+    // ATA / token account creation by target → self-owned
+    if (t === 'createIdempotent' || t === 'create') {
+      if (info.source === target || info.wallet === target || info.owner === target) {
+        if (info.account) selfOwnedAccounts.add(info.account);
+      }
+    }
+    // System program createAccount where source=target → self-owned
+    if (t === 'createAccount' && info.source === target && info.newAccount) {
+      selfOwnedAccounts.add(info.newAccount);
+    }
+    // closeAccount returning lamports to target → that account was target-owned
+    if (t === 'closeAccount' && (info.destination === target || info.owner === target)) {
+      if (info.account) selfOwnedAccounts.add(info.account);
+    }
+    // initializeAccount with owner=target → self-owned
+    if ((t === 'initializeAccount' || t === 'initializeAccount3') && info.owner === target && info.account) {
+      selfOwnedAccounts.add(info.account);
+    }
+    // syncNative on a self-owned WSOL account already in set — keep
+  }
+
+  // ── Native SOL deltas — only count target's own balance change ──
   for (let i = 0; i < acctKeys.length; i++) {
     let delta = (post[i] - pre[i]) / 1e9;
     if (i === 0) delta += fee / 1e9;  // restore fee on fee-payer
@@ -185,29 +224,32 @@ function parseTransfers(tx, target) {
     }
   }
 
-  // SPL token transfers (parsed)
-  const instr = tx.transaction.message.instructions || [];
-  const inner = (tx.meta.innerInstructions || []).flatMap(x => x.instructions);
-  for (const ix of [...instr, ...inner]) {
+  // ── SPL token transfers — skip self-owned accounts ──
+  for (const ix of allIxs) {
     if (!ix.parsed) continue;
     if (ix.parsed.type === 'transfer' || ix.parsed.type === 'transferChecked') {
       const info = ix.parsed.info;
       const amount = (info.tokenAmount?.uiAmount ?? (info.amount ? Number(info.amount) / 1e9 : 0));
       if (!info.source || !info.destination) continue;
-      if (info.source === target) {
+      // Skip if both sides are self-owned (intra-target movement, e.g. wrap SOL)
+      if (selfOwnedAccounts.has(info.source) && selfOwnedAccounts.has(info.destination)) continue;
+      if (info.source === target && !selfOwnedAccounts.has(info.destination)) {
         transfers.push({ addr: info.destination, lamports: -amount, kind: 'out', sig: tx.transaction.signatures[0], slot: tx.slot, mint: info.mint });
-      } else if (info.destination === target) {
+      } else if (info.destination === target && !selfOwnedAccounts.has(info.source)) {
         transfers.push({ addr: info.source, lamports: amount, kind: 'in', sig: tx.transaction.signatures[0], slot: tx.slot, mint: info.mint });
       }
     }
   }
 
-  // Native SOL transfers via System Program parsed instructions
-  for (const ix of [...instr, ...inner]) {
+  // ── Native SOL transfers via System Program — skip self-owned accounts ──
+  for (const ix of allIxs) {
     if (!ix.parsed) continue;
     if (ix.parsed.type === 'transfer' && ix.program === 'system') {
       const info = ix.parsed.info;
       const amount = info.lamports / 1e9;
+      // Skip transfer to self-owned account (e.g., wrapping SOL into WSOL ATA)
+      if (info.source === target && selfOwnedAccounts.has(info.destination)) continue;
+      if (info.destination === target && selfOwnedAccounts.has(info.source)) continue;
       if (info.source === target) {
         transfers.push({ addr: info.destination, lamports: -amount, kind: 'out', sig: tx.transaction.signatures[0], slot: tx.slot });
       } else if (info.destination === target) {

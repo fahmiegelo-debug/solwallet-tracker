@@ -1,12 +1,12 @@
 {
   "_source": "solscanofficial/labels (https://github.com/solscanofficial/labels)",
   "_generated": "2026-05-24",
-  "_count": 127,
+  "_count": 148,
   "_breakdown": {
     "cex": 19,
-    "hacker": 24,
     "flagged": 11,
-    "program": 70,
+    "hacker": 24,
+    "program": 91,
     "token": 3
   },
   "labels": {
@@ -250,6 +250,10 @@
       "name": "Drift Vault",
       "tag": "program"
     },
+    "jitoTsQ4iAwZuNGkLWRYNN1uEZqq8sUuYadTtBDvfYg": {
+      "name": "Jito Stake Pool",
+      "tag": "program"
+    },
     "JUP6i4ozu5ydDCnLiMogSckDPpbtr7BJ4FtzYWkb5Rk": {
       "name": "Jupiter Aggregator v1",
       "tag": "program"
@@ -276,6 +280,10 @@
     },
     "FVhQ3QHvXudWSdGix2sdcG47YmrmUxRhf3KCBmiKfekf": {
       "name": "Jupiter Community Hot Wallet",
+      "tag": "program"
+    },
+    "CamoYhJWdKAfP7iNzn4hY5ZfybE6jWxVvZH7fJZpfvwn": {
+      "name": "Jupiter DCA",
       "tag": "program"
     },
     "DCA265Vj8a9CEuX1eb1LWRnDT7uK6q1xMipnNyatn23M": {
@@ -306,8 +314,20 @@
       "name": "Jupiter Team Hot Wallet",
       "tag": "program"
     },
+    "KLend2g3cP87fffoy8q1mQqGKjrxjC8boSyAYavgmjD": {
+      "name": "Kamino Lend",
+      "tag": "program"
+    },
+    "6LtLpnUFNByNXLyCoK9wA2MykKAmQNZKBdY8s47dehDc": {
+      "name": "Kamino Vaults",
+      "tag": "program"
+    },
     "CrX7kMhLC3cSsXJdT7JDgqrRVWGnUpX3gfEfxxU2NVLi": {
       "name": "Lido for Solana",
+      "tag": "program"
+    },
+    "Lf2ay2qB5tSMuh1uVa5jjpvEvpD7Vdz3kRnGQbE2YrN": {
+      "name": "Lifinity",
       "tag": "program"
     },
     "EewxydAPCCVuNEyrVN68PuSYdQ7wKn27V9Gjeoi8dy3S": {
@@ -316,6 +336,14 @@
     },
     "2wT8Yq49kHgDzXuPxZSaeLaH1qbmGXtEyPy64bL7aD3c": {
       "name": "Lifinity Swap V2",
+      "tag": "program"
+    },
+    "mmm3XBJg5gk8XJxEKBvdgptZz6SgK4tXvn36sodowMc": {
+      "name": "Magic Eden M3M3",
+      "tag": "program"
+    },
+    "M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K": {
+      "name": "Magic Eden v2",
       "tag": "program"
     },
     "GqTPL6qRf5aUuqscLh8Rg2HTxPUXfhhAXDptTLhp1t2J": {
@@ -350,6 +378,10 @@
       "name": "Marinade Finance",
       "tag": "program"
     },
+    "MarBmsSgKXdrN1egZf5sqe1TMThczVmGGNRr4LXjQqb": {
+      "name": "Marinade Liquid Staking",
+      "tag": "program"
+    },
     "ex9CfkBZZd6Nv9XdnoDmmB45ymbu4arXVk7g5pWnt3N": {
       "name": "Marinade Native 1",
       "tag": "program"
@@ -378,6 +410,10 @@
       "name": "Memo Program v2",
       "tag": "program"
     },
+    "cpamdpZCGKUy5JxQXB4dcpGPiikHawvSWAd6mEn1sGG": {
+      "name": "Meteora DAMM v2",
+      "tag": "program"
+    },
     "LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo": {
       "name": "Meteora DLMM Program",
       "tag": "program"
@@ -386,8 +422,20 @@
       "name": "Meteora Pools Program",
       "tag": "program"
     },
+    "STAKE7T9PKMBMSyeZGwq9rLCxnJpMxoRpiHaCKiyu43": {
+      "name": "Meteora Stake",
+      "tag": "program"
+    },
     "24Uqj9JCLxUeoC3hGfh5W3s9FM9uCHDS2SG3LYwBpyTi": {
       "name": "Meteora Vault Program",
+      "tag": "program"
+    },
+    "PoCxWnSnGXhbk4ZyJ8wtqhP4mq8KJqr6JbNK6T4cYQ4": {
+      "name": "Meteora Vault Program",
+      "tag": "program"
+    },
+    "opnb2LAfJYbRMAHHvqjCwQxanZn7ReEHp1k81EohpZb": {
+      "name": "OpenBook v2",
       "tag": "program"
     },
     "whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc": {
@@ -406,6 +454,18 @@
       "name": "Orca Token Swap V2",
       "tag": "program"
     },
+    "PhoeNiXZ8ByJGLkxNfZRnkUfjvmuYqLR89jjFHGqdXY": {
+      "name": "Phoenix",
+      "tag": "program"
+    },
+    "6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P": {
+      "name": "Pump.fun",
+      "tag": "program"
+    },
+    "pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA": {
+      "name": "Pump.fun AMM",
+      "tag": "program"
+    },
     "routeUGWgWzqBWFcrCfv8tritsqukccJPu3q5GPP3xS": {
       "name": "Raydium AMM Routing",
       "tag": "program"
@@ -416,6 +476,10 @@
     },
     "CPK8fQYShAmERZmysQRAGWPvV5qs3AvazQsiR9ctC6ED": {
       "name": "Raydium CLAMM LP",
+      "tag": "program"
+    },
+    "CLMMcD7XUMwKVXPRCxsvK5q3kuPPCKoJpkKqxBZ7Kqj": {
+      "name": "Raydium CLMM",
       "tag": "program"
     },
     "CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK": {
@@ -458,12 +522,32 @@
       "name": "Raydium liquidity pool AMM",
       "tag": "program"
     },
+    "srmqPvymJeFKQ4zGQed1GFppgkRHL9kaELCbyksJtPX": {
+      "name": "Serum DEX v3",
+      "tag": "program"
+    },
     "So1endDq2YkqhipRh3WViPa8hdiSpxWy6z3Z6tMCpAo": {
       "name": "Solend Protocol",
       "tag": "program"
     },
+    "SMPLecH534NA9acpos4G6x7uf3LWbCAwZQE9e8ZekMu": {
+      "name": "Squads V4",
+      "tag": "program"
+    },
+    "Stake11111111111111111111111111111111111111": {
+      "name": "Stake Program",
+      "tag": "program"
+    },
     "11111111111111111111111111111111": {
       "name": "System Program",
+      "tag": "program"
+    },
+    "CoMmpFFHpzgQLn1FcuVNCBzZGw1bENN6jVAHZBsdNMcL": {
+      "name": "Tensor CNFT",
+      "tag": "program"
+    },
+    "TSWAPaqyCSx2KABk68Shruf4rp7CxcNi8hAsbdwmHbN": {
+      "name": "Tensor Swap",
       "tag": "program"
     },
     "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA": {
@@ -518,5 +602,6 @@
       "name": "USDT",
       "tag": "token"
     }
-  }
+  },
+  "_extras": "Manual additions: Meteora DLMM/DAMM, Orca, Raydium CLMM/CPMM, Lifinity, Phoenix, OpenBook, Drift, Mango v4, Jupiter Perps/LO/DCA, Jito, Squads, Marinade, Solend, Kamino, Pump.fun, Tensor, Magic Eden"
 }
