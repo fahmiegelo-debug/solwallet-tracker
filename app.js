@@ -105,7 +105,7 @@ function renderEmptySidebar() {
 async function loadLabelDB() {
   if (STATE.labelDB) return STATE.labelDB;
   if (STATE.labelDBLoading) return STATE.labelDBLoading;
-  STATE.labelDBLoading = fetch(LABEL_DB_URL).then(r => r.json()).then(db => {
+  STATE.labelDBLoading = fetch(LABEL_DB_URL + '?cb=' + Date.now()).then(r => r.json()).then(db => {
     STATE.labelDB = db;
     renderEmptySidebar();
     return db;
