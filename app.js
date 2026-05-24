@@ -1,5 +1,6 @@
-// SolWallet Tracker — Solana wallet cluster visualizer
-// Uses public Solana JSON-RPC (no key needed), with graceful fallback to local demo dataset.
+// SolWallet Tracker — Solana bundler & cluster visualizer
+// Real wallet labels from solscanofficial/labels. No dummy data.
+// Public Solana JSON-RPC. No API key required.
 
 // ─────────────────────────────────────────────────────────
 // CONFIG
@@ -8,49 +9,16 @@ const RPC_ENDPOINTS = [
   'https://api.mainnet-beta.solana.com',
   'https://solana-rpc.publicnode.com',
 ];
-const TX_FETCH_LIMIT = 60;        // signatures to fetch per wallet
-const PARSE_TX_LIMIT = 40;        // transactions to actually parse (RPC heavy)
-const MIN_SOL_TRANSFER = 0.005;   // ignore dust
-const DEMO_DATA_URL = 'demo-data.json';
+const TX_FETCH_LIMIT = 80;
+const PARSE_TX_LIMIT = 50;
+const MIN_SOL_TRANSFER = 0.005;
+const LABEL_DB_URL = 'wallet-labels.json';
 
-// Known CEX/protocol labels (add more as needed)
-const KNOWN_LABELS = {
-  '5Q544fKrFoe6tsEbD7S8EmxGTJYAKtTVhAW5Q5pge4j1': { name: 'Raydium AMM', kind: 'dex' },
-  '675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8': { name: 'Raydium V4', kind: 'dex' },
-  '9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM': { name: 'Binance Hot 2', kind: 'cex' },
-  '2ojv9BAiHUrvsm9gxDe7fJSzbNZSJcxZvf8dqmWGHG8S': { name: 'Coinbase 2', kind: 'cex' },
-  '5tzFkiKscXHK5ZXCGbXZxdw7gTjjD1mBwuoFbhUvuAi9': { name: 'Bybit Hot', kind: 'cex' },
-  'AC5RDfQFmDS1deWZos921JfqscXdByf8BKHs5ACWjtW2': { name: 'Bybit Cold', kind: 'cex' },
-  'H8sMJSCQxfKiFTCfDR3DUMLPwcRbM61LGFJ8N4dK3WjS': { name: 'Coinbase 1', kind: 'cex' },
-  '2AQdpHJ2JpcEgPiATUXjQxA8QmafFegfQwSLWSprPicm': { name: 'Kraken', kind: 'cex' },
-  'FWznbcNXWQuHTawe9RxvQ2LdCENssh12dsznf4RiouN5': { name: 'OKX 1', kind: 'cex' },
-  '3iqGCt3pxNNmmEsZTVxDU3pgxK37LxCM4nEyokbLfMgg': { name: 'OKX 2', kind: 'cex' },
-  'HXqzZuPG7TGLhgYGAkAzH67tXmHvY1jGsFdMoFLyP2Bo': { name: 'Gate.io', kind: 'cex' },
-  '3LKZU3iQcWN6jdfxRsLT5p2ezk9PzaCjVouvY3FhJW5T': { name: 'Jupiter v6', kind: 'protocol' },
-  'JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4': { name: 'Jupiter Token', kind: 'protocol' },
-  '7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU': { name: 'Wormhole Bridge', kind: 'protocol' },
-  'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA': { name: 'Token Program', kind: 'system' },
-  '11111111111111111111111111111111': { name: 'System Program', kind: 'system' },
-  'ComputeBudget111111111111111111111111111111': { name: 'Compute Budget', kind: 'system' },
-
-  // Jito MEV tip accounts (8 official) — bukan bundler wallet, ini infra validator tip pool
-  '96gYZGLnJYVFmbjzopPSU6QiEV5fGqZNyN9nmNhvrZU5': { name: 'Jito Tip 1', kind: 'mev' },
-  'HFqU5x63VTqvQss8hp11i4wVV8bD44PvwucfZ2bU7gRe': { name: 'Jito Tip 2', kind: 'mev' },
-  'Cw8CFyM9FkoMi7K7Crf6HNQqf4uEMzpKw6QNghXLvLkY': { name: 'Jito Tip 3', kind: 'mev' },
-  'ADaUMid9yfUytqMBgopwjb2DTLSokTSzL1zt6iGPaS49': { name: 'Jito Tip 4', kind: 'mev' },
-  'DfXygSm4jCyNCybVYYK6DwvWqjKee8pbDmJGcLWNDXjh': { name: 'Jito Tip 5', kind: 'mev' },
-  'ADuUkR4vqLUMWXxW9gh6D6L8pivKeVBBjNhVgNjCggAk': { name: 'Jito Tip 6', kind: 'mev' },
-  'DttWaMuVvTiduZRnguLF7jNxTgiMBZ1hyAumKUiL2KRL': { name: 'Jito Tip 7', kind: 'mev' },
-  '3AVi9Tg9Uo68tJfuvoKvqKNWKkC5wPdSSdeBnizKZ6jT': { name: 'Jito Tip 8', kind: 'mev' },
-  // Jito ecosystem
-  'jtojtomepa8beP8AuQc6eXt5FriJwfNVBz8VJbBVxn3': { name: 'Jito Token (JTO)', kind: 'protocol' },
-  'J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn': { name: 'jitoSOL', kind: 'protocol' },
-  // Other infra & MEV
-  'noopb9bkMVfRPU8AsbpTUg8AQkHtKwMYZiFUjNRtMmV': { name: 'Helius Nominal', kind: 'mev' },
-  'temporalnoo1d3dECtzcsp6ZN7NRWhmUFSttMD3FnD4j': { name: 'Temporal Bot', kind: 'mev' },
-  'NextbLockBwx9MakeC9X9PfP1RY29kPVDpNhT7qnmW': { name: 'NextBlock', kind: 'mev' },
-  '0xFLAGCv1gaiPHnQK5yiUiQAitH4eGbQp2nDYvhVXp': { name: 'FlagToken', kind: 'protocol' },
-};
+// Heuristic thresholds (focus: bundler detection)
+const BUNDLER_MIN_TX = 3;        // >= N inflow txs from same wallet
+const BUNDLER_SLOT_WINDOW = 50;  // within N slots of each other
+const FUNDER_MIN_SOL = 5;        // single funder threshold
+const DRAIN_FRACTION = 0.5;      // >50% of outflow
 
 const COLORS = {
   target:   '#14f195',
@@ -59,9 +27,9 @@ const COLORS = {
   bundler:  '#ffa726',
   cex:      '#ff6ec7',
   drain:    '#ff4d6d',
-  protocol: '#a78bfa',
-  mev:      '#ffd54f',
-  system:   '#5e677d',
+  hacker:   '#ff4d6d',
+  flagged:  '#ff4d6d',
+  infra:    '#5e677d',  // programs / system / dex / token / wallet — all "infrastructure"
 };
 
 // ─────────────────────────────────────────────────────────
@@ -75,7 +43,8 @@ const STATE = {
   walletData: null,
   selectedWallet: null,
   physicsOn: true,
-  loadingDemo: null,
+  labelDB: null,
+  labelDBLoading: null,
 };
 
 // ─────────────────────────────────────────────────────────
@@ -123,10 +92,41 @@ function clearGraph() {
 function renderEmptySidebar() {
   $('sidebar').innerHTML = `
     <div class="panel-empty" id="panel-empty">
-      <div style="font-size: 36px; margin-bottom: 8px; opacity: 0.5">🔮</div>
-      Track a wallet to see<br>cluster analysis, top counterparties,<br>and pattern flags here.
+      <div style="font-size: 36px; margin-bottom: 8px; opacity: 0.5">🕸️</div>
+      Track a wallet to see<br>bundler clusters & top counterparties.
+      ${STATE.labelDB ? `<div style="margin-top: 14px; font-size: 11px; color: var(--text-2)">Loaded ${STATE.labelDB._count} real wallet labels<br>from <a href="https://github.com/solscanofficial/labels" target="_blank" style="color: var(--accent); text-decoration: none">solscanofficial/labels</a></div>` : ''}
     </div>
   `;
+}
+
+// ─────────────────────────────────────────────────────────
+// LABEL DB — REAL DATA, NOT DUMMY
+// ─────────────────────────────────────────────────────────
+async function loadLabelDB() {
+  if (STATE.labelDB) return STATE.labelDB;
+  if (STATE.labelDBLoading) return STATE.labelDBLoading;
+  STATE.labelDBLoading = fetch(LABEL_DB_URL).then(r => r.json()).then(db => {
+    STATE.labelDB = db;
+    renderEmptySidebar();
+    return db;
+  }).catch(err => {
+    console.error('Failed to load wallet-labels.json', err);
+    STATE.labelDB = { labels: {}, _count: 0 };
+    return STATE.labelDB;
+  });
+  return STATE.labelDBLoading;
+}
+
+function getLabel(addr) {
+  if (!STATE.labelDB || !STATE.labelDB.labels) return null;
+  return STATE.labelDB.labels[addr] || null;
+}
+
+function isInfrastructure(addr) {
+  const l = getLabel(addr);
+  if (!l) return false;
+  // Anything in label DB is "known infrastructure" — bundler/funder/drain heuristics SKIP it
+  return true;
 }
 
 // ─────────────────────────────────────────────────────────
@@ -160,7 +160,6 @@ async function fetchTransaction(sig) {
   return rpc('getTransaction', [sig, { maxSupportedTransactionVersion: 0, encoding: 'jsonParsed' }]);
 }
 
-// Parse an RPC tx into a list of {from, to, lamports, mint?, type}
 function parseTransfers(tx, target) {
   const transfers = [];
   if (!tx || !tx.meta || !tx.transaction) return transfers;
@@ -168,12 +167,12 @@ function parseTransfers(tx, target) {
   const acctKeys = tx.transaction.message.accountKeys.map(k => typeof k === 'string' ? k : k.pubkey);
   const pre = tx.meta.preBalances || [];
   const post = tx.meta.postBalances || [];
-
-  // Native SOL deltas (subtract fee from fee-payer)
   const fee = tx.meta.fee || 0;
+
+  // Native SOL deltas
   for (let i = 0; i < acctKeys.length; i++) {
     let delta = (post[i] - pre[i]) / 1e9;
-    if (i === 0) delta += fee / 1e9;     // fee-payer paid the fee, add it back
+    if (i === 0) delta += fee / 1e9;  // restore fee on fee-payer
     if (Math.abs(delta) < MIN_SOL_TRANSFER) continue;
     if (acctKeys[i] === target) {
       transfers.push({
@@ -186,7 +185,7 @@ function parseTransfers(tx, target) {
     }
   }
 
-  // SPL transfers via inner / outer instructions (best effort)
+  // SPL token transfers (parsed)
   const instr = tx.transaction.message.instructions || [];
   const inner = (tx.meta.innerInstructions || []).flatMap(x => x.instructions);
   for (const ix of [...instr, ...inner]) {
@@ -203,10 +202,23 @@ function parseTransfers(tx, target) {
     }
   }
 
+  // Native SOL transfers via System Program parsed instructions
+  for (const ix of [...instr, ...inner]) {
+    if (!ix.parsed) continue;
+    if (ix.parsed.type === 'transfer' && ix.program === 'system') {
+      const info = ix.parsed.info;
+      const amount = info.lamports / 1e9;
+      if (info.source === target) {
+        transfers.push({ addr: info.destination, lamports: -amount, kind: 'out', sig: tx.transaction.signatures[0], slot: tx.slot });
+      } else if (info.destination === target) {
+        transfers.push({ addr: info.source, lamports: amount, kind: 'in', sig: tx.transaction.signatures[0], slot: tx.slot });
+      }
+    }
+  }
+
   return transfers;
 }
 
-// Aggregate transfers into per-wallet summary
 function aggregateCounterparties(allTransfers, target) {
   const byAddr = new Map();
   for (const t of allTransfers) {
@@ -236,64 +248,53 @@ function aggregateCounterparties(allTransfers, target) {
 }
 
 // ─────────────────────────────────────────────────────────
-// DEMO DATASET (loaded on demand)
-// ─────────────────────────────────────────────────────────
-async function loadDemo() {
-  if (STATE.loadingDemo) return STATE.loadingDemo;
-  STATE.loadingDemo = fetch(DEMO_DATA_URL).then(r => r.json());
-  return STATE.loadingDemo;
-}
-
-async function getDemoData(addr) {
-  try {
-    const all = await loadDemo();
-    return all[addr] || null;
-  } catch {
-    return null;
-  }
-}
-
-// ─────────────────────────────────────────────────────────
-// PATTERN DETECTION
+// CLASSIFICATION — focused on BUNDLER, with real label DB
 // ─────────────────────────────────────────────────────────
 function classifyWallet(w, target, allWallets) {
   const labels = [];
-  const known = KNOWN_LABELS[w.addr];
+  const known = getLabel(w.addr);
 
-  // Tag known infrastructure first
+  // Real label DB hit — tag by category
   if (known) {
-    if (known.kind === 'cex') labels.push({ tag: 'cex', label: 'CEX', name: known.name });
-    else if (known.kind === 'dex' || known.kind === 'protocol') labels.push({ tag: 'protocol', label: known.kind.toUpperCase(), name: known.name });
-    else if (known.kind === 'mev') labels.push({ tag: 'mev', label: 'MEV', name: known.name + ' — validator tip / MEV infra' });
-    else labels.push({ tag: 'system', label: 'SYS', name: known.name });
+    if (known.tag === 'cex') labels.push({ tag: 'cex', label: 'CEX', name: known.name });
+    else if (known.tag === 'hacker') labels.push({ tag: 'hacker', label: 'HACKER', name: known.name });
+    else if (known.tag === 'flagged') labels.push({ tag: 'flagged', label: 'FLAGGED', name: known.name });
+    else labels.push({ tag: 'infra', label: known.tag.toUpperCase(), name: known.name });
+    // Skip bundler/funder/drain heuristics for known infrastructure
+    return labels;
   }
 
-  // CRITICAL: bundler/funder/drain heuristics ONLY apply to unknown user wallets,
-  // not to CEX hot wallets, DEX programs, MEV tip accounts, or system programs.
-  // Jito tip transfers are infrastructure activity — every MEV bundle pays them.
-  const isInfrastructure = !!known;
+  // ── BUNDLER DETECTION ──
+  // 3+ inflow txs from same wallet, all within ~50 slots, no outflow
+  if (w.inCount >= BUNDLER_MIN_TX && w.outCount === 0 && (w.lastSlot - w.firstSlot) < BUNDLER_SLOT_WINDOW) {
+    labels.push({
+      tag: 'bundler',
+      label: 'BUNDLER',
+      name: `Funded target ${w.inCount}× in ${w.lastSlot - w.firstSlot} slot window`,
+    });
+  }
 
-  if (!isInfrastructure) {
-    // Bundler heuristic: 3+ inflow tx within close slot range (originated in same slot batch)
-    if (w.inCount >= 3 && w.outCount === 0 && (w.lastSlot - w.firstSlot) < 50) {
-      labels.push({ tag: 'bundler', label: 'BUNDLER', name: 'Funded the target in burst' });
-    }
-    // Funder heuristic: large single inflow with no outflow
-    if (w.in > 5 && w.inCount <= 2 && w.outCount === 0) {
-      labels.push({ tag: 'funder', label: 'FUNDER', name: 'Sent SOL to target only' });
-    }
-    // Drain heuristic: target sent >50% of total volume here, exclude infra outflow from denominator
-    const totalOutToUserWallets = allWallets
-      .filter(x => !KNOWN_LABELS[x.addr])
-      .reduce((s, x) => s + x.out, 0);
-    if (totalOutToUserWallets > 0 && w.out / totalOutToUserWallets > 0.5 && w.out > 1) {
-      labels.push({ tag: 'drain', label: 'DRAIN', name: 'Received >50% of outflow to user wallets' });
-    }
-    // Cluster heuristic: appears in many same sigs as target's other counterparties
-    const sigsShared = w.sigs.length;
-    if (sigsShared >= 5) {
-      labels.push({ tag: 'cluster', label: 'CLUSTER', name: 'Part of frequent group' });
-    }
+  // ── FUNDER DETECTION ──
+  // Large single inflow with no return
+  if (w.in >= FUNDER_MIN_SOL && w.inCount <= 2 && w.outCount === 0) {
+    labels.push({
+      tag: 'funder',
+      label: 'FUNDER',
+      name: `Sent ${w.in.toFixed(2)} SOL, never received back`,
+    });
+  }
+
+  // ── DRAIN DETECTION ──
+  // Single recipient takes >50% of total outflow to user wallets
+  const totalOutToUserWallets = allWallets
+    .filter(x => !isInfrastructure(x.addr))
+    .reduce((s, x) => s + x.out, 0);
+  if (totalOutToUserWallets > 0 && w.out / totalOutToUserWallets > DRAIN_FRACTION && w.out > 1) {
+    labels.push({
+      tag: 'drain',
+      label: 'DRAIN',
+      name: `Received ${(w.out / totalOutToUserWallets * 100).toFixed(0)}% of target's outflow`,
+    });
   }
 
   return labels;
@@ -302,13 +303,11 @@ function classifyWallet(w, target, allWallets) {
 function pickColor(labels, kind) {
   for (const l of labels) {
     if (l.tag === 'drain') return COLORS.drain;
+    if (l.tag === 'hacker') return COLORS.hacker;
+    if (l.tag === 'flagged') return COLORS.flagged;
     if (l.tag === 'cex') return COLORS.cex;
-    if (l.tag === 'mev') return COLORS.mev;
-    if (l.tag === 'bundler') return COLORS.bundler;
-    if (l.tag === 'funder') return COLORS.bundler;
-    if (l.tag === 'protocol') return COLORS.protocol;
-    if (l.tag === 'system') return COLORS.system;
-    if (l.tag === 'cluster') return '#a78bfa';
+    if (l.tag === 'bundler' || l.tag === 'funder') return COLORS.bundler;
+    if (l.tag === 'infra') return COLORS.infra;
   }
   return kind === 'in' ? COLORS.inflow : COLORS.outflow;
 }
@@ -323,7 +322,7 @@ function renderGraph(target, wallets) {
   const nodes = new vis.DataSet();
   const edges = new vis.DataSet();
 
-  // root
+  // Target node
   nodes.add({
     id: target,
     label: shortAddr(target),
@@ -337,7 +336,7 @@ function renderGraph(target, wallets) {
 
   for (const w of wallets) {
     const labels = classifyWallet(w, target, wallets);
-    const known = KNOWN_LABELS[w.addr];
+    const known = getLabel(w.addr);
     const kind = w.in > w.out ? 'in' : 'out';
     const color = pickColor(labels, kind);
     const sizeBase = Math.min(28, 10 + Math.log10(1 + w.txCount * 4) * 6);
@@ -361,7 +360,6 @@ function renderGraph(target, wallets) {
       _data: { ...w, labels },
     });
 
-    // edge
     const edgeColor = kind === 'in' ? COLORS.inflow : COLORS.outflow;
     const width = Math.min(6, 1 + Math.log10(1 + (w.in + w.out)) * 1.4);
     edges.add({
@@ -388,13 +386,8 @@ function renderGraph(target, wallets) {
       barnesHut: { gravitationalConstant: -8000, centralGravity: 0.25, springLength: 140, springConstant: 0.04, damping: 0.7, avoidOverlap: 0.4 },
       stabilization: { iterations: 200, fit: true },
     },
-    nodes: {
-      borderWidth: 2,
-      shadow: { enabled: true, color: 'rgba(0,0,0,0.5)', size: 8, x: 0, y: 4 },
-    },
-    edges: {
-      hoverWidth: w => w + 0.5,
-    },
+    nodes: { borderWidth: 2, shadow: { enabled: true, color: 'rgba(0,0,0,0.5)', size: 8, x: 0, y: 4 } },
+    edges: { hoverWidth: w => w + 0.5 },
   };
 
   STATE.network = new vis.Network($('network'), { nodes, edges }, opts);
@@ -412,7 +405,6 @@ function renderGraph(target, wallets) {
     }
   });
 
-  // initial sidebar
   renderTargetSidebar(target, wallets);
 }
 
@@ -430,18 +422,16 @@ function renderTargetSidebar(target, wallets) {
   const funderCount = allLabels.filter(l => l.tag === 'funder').length;
   const cexCount = allLabels.filter(l => l.tag === 'cex').length;
   const drainCount = allLabels.filter(l => l.tag === 'drain').length;
-  const mevCount = allLabels.filter(l => l.tag === 'mev').length;
-  const protocolCount = allLabels.filter(l => l.tag === 'protocol').length;
+  const hackerCount = allLabels.filter(l => l.tag === 'hacker' || l.tag === 'flagged').length;
 
   const insights = [];
-  if (bundlerCount > 0) insights.push({ kind: 'warn', icon: '📦', text: `<strong>${bundlerCount} bundler-pattern wallet${bundlerCount > 1 ? 's' : ''}</strong> sent SOL to this address in tight burst windows. Often indicates coordinated funding.` });
-  if (funderCount > 0) insights.push({ kind: 'info', icon: '💰', text: `<strong>${funderCount} pure funder${funderCount > 1 ? 's' : ''}</strong> sent SOL only (no return). Could be deployer wallets or sybil farm.` });
-  if (cexCount > 0) insights.push({ kind: 'info', icon: '🏦', text: `<strong>${cexCount} CEX hot wallet${cexCount > 1 ? 's' : ''}</strong> in the graph. Indicates fiat on/off-ramp.` });
-  if (drainCount > 0) insights.push({ kind: 'alert', icon: '🚨', text: `<strong>${drainCount} drain destination${drainCount > 1 ? 's' : ''}</strong> received over 50% of total outflow to user wallets. Possible exit/rug pattern.` });
-  if (mevCount > 0) insights.push({ kind: 'info', icon: '⚡', text: `<strong>${mevCount} MEV / Jito tip account${mevCount > 1 ? 's' : ''}</strong> — wallet uses MEV bundles or transaction acceleration. Not a counterparty, just infrastructure.` });
-  if (protocolCount > 0) insights.push({ kind: 'info', icon: '⚙️', text: `<strong>${protocolCount} DEX/protocol interaction${protocolCount > 1 ? 's' : ''}</strong> (Raydium, Jupiter, Wormhole, etc). Active trader profile.` });
-  if (uniqueCounter > 30) insights.push({ kind: 'info', icon: '🌐', text: `Highly connected wallet — ${uniqueCounter} unique counterparties. Likely active trader, MM, or hub.` });
-  if (insights.length === 0) insights.push({ kind: 'info', icon: '✨', text: 'No suspicious cluster pattern detected from sampled history. Looks like normal activity.' });
+  if (bundlerCount > 0) insights.push({ kind: 'warn', icon: '📦', text: `<strong>${bundlerCount} bundler-pattern wallet${bundlerCount > 1 ? 's' : ''}</strong> sent SOL to this address in tight burst windows. Strong coordinated funding signal.` });
+  if (funderCount > 0) insights.push({ kind: 'info', icon: '💰', text: `<strong>${funderCount} pure funder${funderCount > 1 ? 's' : ''}</strong> sent SOL only (no return). Could be deployer wallets or sybil setup.` });
+  if (cexCount > 0) insights.push({ kind: 'info', icon: '🏦', text: `<strong>${cexCount} CEX hot wallet${cexCount > 1 ? 's' : ''}</strong> in graph. Indicates fiat on/off-ramp activity.` });
+  if (drainCount > 0) insights.push({ kind: 'alert', icon: '🚨', text: `<strong>${drainCount} drain destination${drainCount > 1 ? 's' : ''}</strong> received over 50% of total outflow. Possible exit/rug pattern.` });
+  if (hackerCount > 0) insights.push({ kind: 'alert', icon: '☠️', text: `<strong>${hackerCount} flagged wallet${hackerCount > 1 ? 's' : ''}</strong> in graph (hackers/scams from public reports). High-risk interaction.` });
+  if (uniqueCounter > 30) insights.push({ kind: 'info', icon: '🌐', text: `Highly connected — ${uniqueCounter} unique counterparties. Likely active trader, MM, or hub.` });
+  if (insights.length === 0) insights.push({ kind: 'info', icon: '✨', text: 'No bundler or suspicious cluster pattern detected from sampled history.' });
 
   const sortedWallets = [...wallets].sort((a, b) => (b.in + b.out) - (a.in + a.out));
 
@@ -454,7 +444,7 @@ function renderTargetSidebar(target, wallets) {
           <div class="meta-cell"><div class="meta-label">Inflow</div><div class="meta-value" style="color: var(--accent)">+${fmtSOL(inflow)}</div></div>
           <div class="meta-cell"><div class="meta-label">Outflow</div><div class="meta-value" style="color: var(--info)">−${fmtSOL(outflow)}</div></div>
           <div class="meta-cell"><div class="meta-label">Counterparties</div><div class="meta-value">${uniqueCounter}</div></div>
-          <div class="meta-cell"><div class="meta-label">Tx Count</div><div class="meta-value">${txCount}</div></div>
+          <div class="meta-cell"><div class="meta-label">Tx parsed</div><div class="meta-value">${txCount}</div></div>
         </div>
       </div>
     </div>
@@ -474,9 +464,9 @@ function renderTargetSidebar(target, wallets) {
     <div class="section">
       <div class="section-title">Top Counterparties <span class="badge">${wallets.length}</span></div>
       <div class="wallet-list">
-        ${sortedWallets.slice(0, 12).map(w => {
+        ${sortedWallets.slice(0, 15).map(w => {
           const labels = classifyWallet(w, target, wallets);
-          const known = KNOWN_LABELS[w.addr];
+          const known = getLabel(w.addr);
           const isIn = w.in > w.out;
           return `
             <div class="wallet-item" data-addr="${w.addr}">
@@ -498,31 +488,21 @@ function renderTargetSidebar(target, wallets) {
       <div class="section-title">Quick Links</div>
       <div class="wallet-list">
         <a class="wallet-item" target="_blank" href="https://solscan.io/account/${target}" style="text-decoration: none; display: block">
-          <div class="wallet-row1">
-            <span class="wallet-addr-short">View on Solscan</span>
-            <span class="wallet-amount amount-in">↗</span>
-          </div>
+          <div class="wallet-row1"><span class="wallet-addr-short">View on Solscan</span><span class="wallet-amount amount-in">↗</span></div>
           <div class="wallet-meta"><span>solscan.io</span><span></span></div>
         </a>
         <a class="wallet-item" target="_blank" href="https://gmgn.ai/sol/address/${target}" style="text-decoration: none; display: block">
-          <div class="wallet-row1">
-            <span class="wallet-addr-short">View on GMGN</span>
-            <span class="wallet-amount amount-in">↗</span>
-          </div>
+          <div class="wallet-row1"><span class="wallet-addr-short">View on GMGN</span><span class="wallet-amount amount-in">↗</span></div>
           <div class="wallet-meta"><span>gmgn.ai</span><span></span></div>
         </a>
         <a class="wallet-item" target="_blank" href="https://birdeye.so/profile/${target}?chain=solana" style="text-decoration: none; display: block">
-          <div class="wallet-row1">
-            <span class="wallet-addr-short">View on Birdeye</span>
-            <span class="wallet-amount amount-in">↗</span>
-          </div>
+          <div class="wallet-row1"><span class="wallet-addr-short">View on Birdeye</span><span class="wallet-amount amount-in">↗</span></div>
           <div class="wallet-meta"><span>birdeye.so</span><span></span></div>
         </a>
       </div>
     </div>
   `;
 
-  // wire up
   $('sidebar').querySelectorAll('[data-addr]').forEach(el => {
     el.addEventListener('click', (e) => {
       if (e.target.closest('a')) return;
@@ -546,7 +526,7 @@ function renderTargetSidebar(target, wallets) {
 
 function renderWalletDetail(node) {
   const w = node._data;
-  const known = KNOWN_LABELS[w.addr];
+  const known = getLabel(w.addr);
   const labels = w.labels || [];
   const isIn = w.in > w.out;
 
@@ -558,10 +538,10 @@ function renderWalletDetail(node) {
       </div>
       <div class="target-card">
         <div class="target-addr">${w.addr} <button class="copy-btn" data-copy="${w.addr}">Copy</button></div>
-        ${known ? `<div style="margin-top: 8px; font-size: 13px; color: var(--text-0)"><strong>${known.name}</strong> <span style="color: var(--text-2); text-transform: uppercase; font-size: 10px">· ${known.kind}</span></div>` : ''}
+        ${known ? `<div style="margin-top: 8px; font-size: 13px; color: var(--text-0)"><strong>${known.name}</strong> <span style="color: var(--text-2); text-transform: uppercase; font-size: 10px">· ${known.tag}</span></div>` : ''}
         <div class="tag-row">
           ${labels.map(l => `<span class="tag tag-${l.tag}" title="${l.name}">${l.label}</span>`).join('')}
-          ${labels.length === 0 ? '<span class="tag tag-cluster" style="opacity: 0.5">UNLABELED</span>' : ''}
+          ${labels.length === 0 ? '<span class="tag tag-infra" style="opacity: 0.5">UNLABELED</span>' : ''}
         </div>
         <div class="target-meta">
           <div class="meta-cell"><div class="meta-label">Sent to target</div><div class="meta-value" style="color: var(--accent)">${fmtSOL(w.in)}</div></div>
@@ -575,10 +555,10 @@ function renderWalletDetail(node) {
     <div class="section">
       <div class="section-title">Why this label?</div>
       <div class="insights">
-        ${labels.length === 0 ? '<div class="insight info"><div class="insight-icon">🤷</div><div class="insight-text">No automated label triggered for this wallet. Open it on Solscan or GMGN for deeper inspection.</div></div>' : ''}
+        ${labels.length === 0 ? '<div class="insight info"><div class="insight-icon">🤷</div><div class="insight-text">No automated label triggered — wallet is unlabeled and shows no bundler/funder/drain pattern. Open it on Solscan or GMGN for deeper inspection.</div></div>' : ''}
         ${labels.map(l => `
-          <div class="insight ${l.tag === 'drain' ? 'alert' : (l.tag === 'bundler' ? 'warn' : 'info')}">
-            <div class="insight-icon">${l.tag === 'cex' ? '🏦' : l.tag === 'bundler' ? '📦' : l.tag === 'funder' ? '💰' : l.tag === 'drain' ? '🚨' : l.tag === 'protocol' ? '⚙️' : l.tag === 'mev' ? '⚡' : l.tag === 'system' ? '🛠️' : l.tag === 'cluster' ? '🕸️' : '🏷️'}</div>
+          <div class="insight ${l.tag === 'drain' || l.tag === 'hacker' || l.tag === 'flagged' ? 'alert' : (l.tag === 'bundler' ? 'warn' : 'info')}">
+            <div class="insight-icon">${l.tag === 'cex' ? '🏦' : l.tag === 'bundler' ? '📦' : l.tag === 'funder' ? '💰' : l.tag === 'drain' ? '🚨' : l.tag === 'hacker' || l.tag === 'flagged' ? '☠️' : l.tag === 'infra' ? '🛠️' : '🏷️'}</div>
             <div class="insight-text"><strong>${l.label}</strong> — ${l.name}</div>
           </div>
         `).join('')}
@@ -594,7 +574,7 @@ function renderWalletDetail(node) {
               <span class="wallet-addr-short">${shortAddr(s, 6)}</span>
               <span class="wallet-amount amount-in">↗</span>
             </div>
-            <div class="wallet-meta"><span>Solscan</span><span>${s.length} chars</span></div>
+            <div class="wallet-meta"><span>Solscan</span><span>tx</span></div>
           </a>
         `).join('')}
       </div>
@@ -646,22 +626,14 @@ async function trackWallet(addr) {
   setStatus('Loading…');
 
   try {
-    // Try demo data first (instant, demonstrates capability without RPC delay)
-    const demo = await getDemoData(addr);
-    if (demo) {
-      setStatus('Loading demo cluster…');
-      await new Promise(r => setTimeout(r, 400));
-      renderGraph(addr, demo.wallets);
-      setStatus('', false);
-      return;
-    }
+    // Ensure label DB loaded
+    await loadLabelDB();
 
-    // Real RPC path
-    setStatus('Fetching signatures…');
+    setStatus('Fetching signatures from Solana RPC…');
     const sigs = await fetchSignatures(addr, TX_FETCH_LIMIT);
     if (!sigs || sigs.length === 0) {
       setStatus('', false);
-      alert('No transactions found for this address (or RPC rate-limited). Try a demo address from the header.');
+      alert('No transactions found for this address.\n\nThis is real on-chain data — the wallet must have history. Try a more active address.');
       $('btn-track').disabled = false;
       return;
     }
@@ -670,7 +642,6 @@ async function trackWallet(addr) {
     const slice = sigs.slice(0, PARSE_TX_LIMIT);
     const allTransfers = [];
 
-    // batch in parallel waves of 5 (RPC nicety)
     const wave = 5;
     for (let i = 0; i < slice.length; i += wave) {
       const chunk = slice.slice(i, i + wave);
@@ -683,19 +654,19 @@ async function trackWallet(addr) {
 
     if (allTransfers.length === 0) {
       setStatus('', false);
-      alert('Could not parse transfers from on-chain data. The wallet might only have program calls or be very new. Try a demo address.');
+      alert('No SOL/SPL transfers found in sampled history.\n\nThe wallet might only call programs without value transfer, or RPC may have rate-limited the request.');
       $('btn-track').disabled = false;
       return;
     }
 
-    setStatus('Building graph…');
+    setStatus('Building cluster graph…');
     const wallets = aggregateCounterparties(allTransfers, addr);
     renderGraph(addr, wallets);
     setStatus('', false);
   } catch (err) {
     console.error(err);
     setStatus('', false);
-    alert('Tracking failed: ' + err.message + '\n\nPublic Solana RPC may be rate-limited. Try a demo address from the header.');
+    alert('Tracking failed: ' + err.message + '\n\nPublic Solana RPC may be rate-limited. Wait a moment and try again, or plug in a paid RPC (Helius/QuickNode) by editing app.js.');
   } finally {
     $('btn-track').disabled = false;
   }
@@ -704,16 +675,9 @@ async function trackWallet(addr) {
 // ─────────────────────────────────────────────────────────
 // EVENT WIRING
 // ─────────────────────────────────────────────────────────
-$('btn-track').addEventListener('click', () => {
-  trackWallet($('addr-input').value);
-});
-$('addr-input').addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') trackWallet(e.target.value);
-});
-$('btn-clear').addEventListener('click', () => {
-  $('addr-input').value = '';
-  clearGraph();
-});
+$('btn-track').addEventListener('click', () => trackWallet($('addr-input').value));
+$('addr-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') trackWallet(e.target.value); });
+$('btn-clear').addEventListener('click', () => { $('addr-input').value = ''; clearGraph(); });
 document.querySelectorAll('[data-addr]').forEach(b => {
   b.addEventListener('click', () => {
     const a = b.dataset.addr;
@@ -730,3 +694,6 @@ $('btn-physics').addEventListener('click', (e) => {
   STATE.network.setOptions({ physics: { enabled: STATE.physicsOn } });
   e.currentTarget.classList.toggle('active', STATE.physicsOn);
 });
+
+// Boot — load real label DB on page load
+loadLabelDB();

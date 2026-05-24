@@ -1,6 +1,6 @@
 # 🕸️ SolWallet Tracker
 
-**Solana wallet cluster visualizer.** Paste a wallet address, get a force-directed graph of inflows/outflows, automatic bundler/funder/CEX detection, and pattern flags. Like Arkham — but cleaner, simpler, and 100% free.
+**Solana wallet bundler & cluster visualizer.** Paste a wallet address, get a force-directed graph of inflows/outflows with automatic bundler detection, CEX recognition, and drain alerts. Real on-chain data, real wallet labels, no API key required.
 
 🔗 **Live demo**: https://fahmiegelo-debug.github.io/solwallet-tracker/
 
@@ -8,31 +8,51 @@
 
 ## Why?
 
-Arkham is powerful but feels heavy and locked behind sign-up. **SolWallet Tracker** is the opposite:
+Arkham is powerful but heavy and locked behind sign-up. **SolWallet Tracker** is the opposite:
 
-- 🎯 **One input, one click** — paste address → instant graph
+- 🎯 **One input, one click** — paste address → instant cluster graph
+- 📦 **Bundler-focused detection** — primary use case is finding coordinated funding patterns
 - 🌐 **No sign-up, no API key, no wallet connect** — works in the browser
-- 🕸️ **Cluster detection** — bundlers, funders, CEX hot wallets, drain destinations auto-flagged
-- 🎨 **Better aesthetics** — Solana-themed dark UI, force layout, no noise
+- 🏷️ **Real wallet labels** — 127 verified entries from [solscanofficial/labels](https://github.com/solscanofficial/labels)
 - 💰 **Free forever** — open-source, MIT, host yourself or use the live demo
 
-## Features
+## What it detects
 
-- 🔗 **Force-directed graph** of wallet connections (vis-network)
-- 🏷️ **Auto-labeling** — known CEX/protocol wallets recognized (Binance, Coinbase, Bybit, Kraken, OKX, Gate, Raydium, Jupiter, Wormhole)
-- 📦 **Bundler detection** — wallets that funded target in tight burst windows
-- 💰 **Funder detection** — pure inflow with no return (sybil/farm pattern)
-- 🚨 **Drain detection** — wallets receiving >50% of total outflow (rug/exit pattern)
-- 🌐 **Cluster detection** — wallets sharing many sigs with target
-- 📊 **Sidebar insights** — actionable findings: "3 bundler wallets sent SOL in burst", "2 drain destinations received 70% of outflow"
-- 🔍 **Click any node** — drill into counterparty: tags, signatures, deep links to Solscan/GMGN/Birdeye
-- ⚛︎ **Physics toggle** — pause layout to inspect cleanly
-- ⚡ **Demo dataset** — 3 pre-loaded clusters (bundler, CEX, rugger) work instantly even if RPC is rate-limited
+The tool focuses on **bundler patterns** and a few critical adjacent flags:
+
+| Pattern | What it means | When it fires |
+|---------|---------------|---------------|
+| 📦 **BUNDLER** | Wallet funded the target in a tight burst window | 3+ inflow txs, 0 outflow, all within ~50 slots |
+| 💰 **FUNDER** | Pure deployer/sybil-funding pattern | ≥5 SOL inflow, ≤2 txs, 0 outflow |
+| 🚨 **DRAIN** | Possible exit/rug destination | Receives >50% of target's outflow to user wallets |
+| 🏦 **CEX** | Known centralized exchange hot wallet | Match in real Solscan label DB |
+| ☠️ **HACKER** | Publicly reported hacker/exploit wallet | Match in Solscan hacker list |
+| ⚠️ **FLAGGED** | Phishing, scam, drainer, FTX cold storage, etc. | Match in flagged list |
+| 🛠️ **INFRA** | Programs, system accounts, wallet contracts | Match in program registry |
+
+**Important:** bundler/funder/drain heuristics **only apply to unknown user wallets**. Known infrastructure (Pump.fun program, Raydium, Jupiter, Token Program, etc.) is excluded — every memecoin tx pays these, and flagging them as "bundler" would be noise.
+
+## Real wallet label database
+
+This repo ships with `wallet-labels.json` — 127 entries pulled from the official Solscan public labels repo:
+
+- 19 **CEX hot wallets** (Binance, Coinbase, Kraken, Bybit, OKX, KuCoin, MEXC, Crypto.com, Gate.io, Bitget, etc.)
+- 24 **hacker wallets** (publicly reported exploits, attributed by Solscan)
+- 11 **flagged wallets** (FTX cold storage, Alameda, drainers, scam addresses)
+- 70 **programs** (Pump.fun, Raydium AMM v4, Jupiter v6, Orca Whirlpool, Meteora, system programs, wallet contracts)
+- 3 **trust tokens** (SOL, USDC, USDT)
+
+To refresh the database:
+
+```bash
+curl -s https://raw.githubusercontent.com/solscanofficial/labels/main/labels.json -o solscan_raw.json
+# regenerate wallet-labels.json with the script in /scripts/build-labels.py (or re-run the curation)
+```
 
 ## Stack
 
-- [vis-network 9.x](https://visjs.github.io/vis-network/) — force graph
-- [Solana JSON-RPC](https://docs.solana.com/api/http) — public mainnet endpoint, no key required
+- [vis-network 9.x](https://visjs.github.io/vis-network/) — force-directed graph
+- [Solana JSON-RPC](https://docs.solana.com/api/http) — public mainnet, no key
 - Vanilla HTML/CSS/JS — no build step, no framework
 - Static deployment via GitHub Pages
 
@@ -47,76 +67,55 @@ python3 -m http.server 8000
 
 ## How it works
 
-1. **Fetch signatures** for the target wallet via `getSignaturesForAddress`
-2. **Parse transactions** (up to 40) via `getTransaction` with `jsonParsed` encoding
-3. **Extract transfers** — native SOL deltas + SPL parsed `transfer` / `transferChecked` instructions
-4. **Aggregate counterparties** — group by address, sum in/out, count txs, track signatures
-5. **Classify** — apply pattern heuristics + known-label database
-6. **Render** — vis-network force graph with edge weights proportional to volume
-
-## Pattern heuristics
-
-Heuristics **only apply to unknown user wallets**. Known infrastructure (CEX hot wallets, DEX programs, Jito tip accounts, system programs) is excluded — Jito tips are paid by every MEV bundle and would otherwise trigger false bundler/drain flags.
-
-| Pattern | Trigger | Applies to |
-|---------|---------|------------|
-| **CEX** | Address matches known CEX hot wallet database | Any |
-| **Protocol** | Raydium, Jupiter, Orca, Wormhole, etc. | Any |
-| **MEV** | Jito tip accounts, NextBlock, Helius nominal, Temporal | Any |
-| **Bundler** | 3+ inflow tx, 0 outflow, all within ~50 slots | User wallets only |
-| **Funder** | Single large inflow >5 SOL, 0 outflow | User wallets only |
-| **Drain** | Receives >50% of target's total outflow **to user wallets** | User wallets only |
-| **Cluster** | Shares 5+ signatures (frequent co-occurrence) | User wallets only |
-
-## Known-label database
-
-Currently labels these wallets out-of-the-box:
-
-- **CEX**: Binance, Coinbase, Bybit, Kraken, OKX, Gate.io
-- **DEX**: Raydium AMM v4, Orca
-- **Aggregator**: Jupiter v6
-- **Bridge**: Wormhole
-- **System**: Token Program, System Program, Compute Budget
-
-Add more via `KNOWN_LABELS` in `app.js`.
+1. **Fetch signatures** for target wallet via `getSignaturesForAddress` (last 80)
+2. **Parse transactions** (up to 50) via `getTransaction` with `jsonParsed` encoding
+3. **Extract transfers** — native SOL deltas + SPL `transfer`/`transferChecked` + System Program `transfer`
+4. **Aggregate counterparties** — group by address, sum in/out, count txs, track signature set
+5. **Classify** — apply bundler/funder/drain heuristics + match against real label DB
+6. **Render** — vis-network force graph, edge weight ∝ volume
 
 ## Customize
 
-- **Tx fetch limit**: change `TX_FETCH_LIMIT` (default 60)
-- **Parse limit**: change `PARSE_TX_LIMIT` (default 40, RPC-heavy)
+- **Tx fetch limit**: `TX_FETCH_LIMIT` (default 80)
+- **Parse limit**: `PARSE_TX_LIMIT` (default 50, RPC-heavy)
 - **Min transfer**: `MIN_SOL_TRANSFER` (default 0.005 SOL — ignores dust)
+- **Bundler thresholds**: `BUNDLER_MIN_TX`, `BUNDLER_SLOT_WINDOW`
+- **Funder threshold**: `FUNDER_MIN_SOL`
+- **Drain fraction**: `DRAIN_FRACTION`
 - **RPC endpoints**: edit `RPC_ENDPOINTS` array, add Helius/QuickNode for higher throughput
 
 ## Use cases
 
 - 🕵️ **Memecoin diligence** — find bundler clusters before aping a fresh token
 - 🚨 **Rug detection** — see if deployer drained funds to known wallets
-- 🐋 **Whale tracking** — map a known address's full counterparty graph
+- 🐋 **Whale tracing** — map a known address's full counterparty graph
 - 💼 **Compliance** — identify CEX exposure, OFAC-flagged interactions
-- 🎯 **Sybil hunting** — visualize airdrop farm clusters
+- 🎯 **Sybil hunting** — visualize airdrop farm coordinated funding
 - 🔍 **Forensics** — trace stolen funds through hops
+
+## Limitations
+
+- Public Solana RPC is rate-limited — for heavy use, plug in Helius/QuickNode/Triton
+- Heuristics are conservative; manual judgment still required
+- Only sampled history (last ~50 tx parsed); for deep historical, integrate paid indexer
+- Bundler detection currently single-hop; multi-hop trace not yet implemented
 
 ## Roadmap
 
 - [ ] Multi-hop expansion (click counterparty → expand its graph)
 - [ ] Time-based filtering (slot range slider)
-- [ ] SOL value lookup at slot time (USD attribution)
 - [ ] Token transfer overlay (which memecoin moved between wallets)
 - [ ] Helius webhook integration for live updates
 - [ ] Export graph as PNG/SVG/JSON
 - [ ] Save & share clusters via URL hash
-- [ ] EVM support (chain switcher)
-
-## Limitations
-
-- Public RPC is rate-limited — for heavy use, plug in Helius/QuickNode/Triton
-- Heuristics are conservative; manual judgment still required
-- Only sampled history (last ~40 tx parsed); for deep historical, integrate paid indexer
+- [ ] Auto-refresh `wallet-labels.json` via GitHub Action (weekly pull from solscanofficial/labels)
 
 ## License
 
-MIT — fork it, ship it, charge for it. Just don't be evil.
+MIT — fork it, ship it, charge for it.
 
-## Author
+## Credits
 
-Built by [@fahmiegelo-debug](https://github.com/fahmiegelo-debug). Part of an open-source toolkit for crypto traders & researchers.
+- Wallet labels: [solscanofficial/labels](https://github.com/solscanofficial/labels)
+- Bundler heuristics inspired by [hiburhan/wallet-analyzer](https://github.com/hiburhan/wallet-analyzer) and [netvyxe/godmode](https://github.com/netvyxe/godmode)
+- Built by [@fahmiegelo-debug](https://github.com/fahmiegelo-debug)

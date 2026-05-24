@@ -1,0 +1,522 @@
+{
+  "_source": "solscanofficial/labels (https://github.com/solscanofficial/labels)",
+  "_generated": "2026-05-24",
+  "_count": 127,
+  "_breakdown": {
+    "cex": 19,
+    "hacker": 24,
+    "flagged": 11,
+    "program": 70,
+    "token": 3
+  },
+  "labels": {
+    "2ojv9BAiHUrvsm9gxDe7fJSzbNZSJcxZvf8dqmWGHG8S": {
+      "name": "Binance 1",
+      "tag": "cex"
+    },
+    "5tzFkiKscXHK5ZXCGbXZxdw7gTjjD1mBwuoFbhUvuAi9": {
+      "name": "Binance 2",
+      "tag": "cex"
+    },
+    "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM": {
+      "name": "Binance 3",
+      "tag": "cex"
+    },
+    "FxteHmLwG9nk1eL4pjNve3Eub2goGkkz6g6TbvdmW46a": {
+      "name": "Bitfinex",
+      "tag": "cex"
+    },
+    "AC5RDfQFmDS1deWZos921JfqscXdByf8BKHs5ACWjtW2": {
+      "name": "Bybit",
+      "tag": "cex"
+    },
+    "H8sMJSCQxfKiFTCfDR3DUMLPwcRbM61LGFJ8N4dK3WjS": {
+      "name": "Coinbase 1",
+      "tag": "cex"
+    },
+    "2AQdpHJ2JpcEgPiATUXjQxA8QmafFegfQwSLWSprPicm": {
+      "name": "Coinbase 2",
+      "tag": "cex"
+    },
+    "GJRs4FwHtemZ5ZE9x3FNvJ8TMwitKTh21yxdRPqn7npE": {
+      "name": "Coinbase 2",
+      "tag": "cex"
+    },
+    "6FEVkH17P9y8Q9aCkDdPcMDjvj7SVxrTETaYEm8f51Jy": {
+      "name": "Crypto.com 1",
+      "tag": "cex"
+    },
+    "AobVSwdW9BbpMdJvTqeCN4hPAmh4rHm7vwLnQ5ATSyrS": {
+      "name": "Crypto.com 2",
+      "tag": "cex"
+    },
+    "u6PJ8DtQuPFnfmwHbGFULQ4u4EgjDiyYKjVEsynXq2w": {
+      "name": "Gate.io",
+      "tag": "cex"
+    },
+    "HiRpdAZifEsZGdzQ5Xo5wcnaH3D2Jj9SoNsUzcYNK78J": {
+      "name": "Gate.io 2",
+      "tag": "cex"
+    },
+    "88xTWZMeKfiTgbfEmPLdsUCQcZinwUfk25EBQZ21XMAZ": {
+      "name": "Huobi",
+      "tag": "cex"
+    },
+    "FWznbcNXWQuHTawe9RxvQ2LdCENssh12dsznf4RiouN5": {
+      "name": "Kraken",
+      "tag": "cex"
+    },
+    "57vSaRTqN9iXaemgh4AoDsZ63mcaoshfMK8NP3Z5QNbs": {
+      "name": "Kucoin",
+      "tag": "cex"
+    },
+    "BmFdpraQhkiDQE6SnfG5omcA1VwzqfXrwtNYBwWTymy6": {
+      "name": "Kucoin",
+      "tag": "cex"
+    },
+    "ASTyfSima4LLAdDgoFGkgqoKowG1LZFDr9fAQrg7iaJZ": {
+      "name": "MEXC",
+      "tag": "cex"
+    },
+    "5VCwKtCXgCJ6kit5FybXjvriW3xELsFDhYrPSqtJNmcD": {
+      "name": "OKX",
+      "tag": "cex"
+    },
+    "Fa17nmHFt62kmerRQNGtgVWDxnuf7UD3PY2eeFfhpz2t": {
+      "name": "dimGate",
+      "tag": "cex"
+    },
+    "5Xm6nU1Bi6UewCrhJQFk1CAV97ZJaRiFw4tFNhUbXy3u": {
+      "name": "Alameda 1",
+      "tag": "flagged"
+    },
+    "HtJAWMsSRXbyBvXm1F4PDnGFzhgfBAPciyHWMZgugejX": {
+      "name": "Alameda 2",
+      "tag": "flagged"
+    },
+    "CuieVDEDtLo7FypA9SbLM9saXFdb1dsshEkyErMqkRQq": {
+      "name": "Alameda 3",
+      "tag": "flagged"
+    },
+    "EhYXq3ANp5nAerUpbSgd7VK2RRcxK1zNuSQ755G5Mtxx": {
+      "name": "Alameda Staking #1",
+      "tag": "flagged"
+    },
+    "e6keeZrGmHMiQaFM3TAYvFz8HE3qtTFUSHsyqq5FEw7": {
+      "name": "Alameda Staking #2",
+      "tag": "flagged"
+    },
+    "DYG1ooTxkLS5iHDkte2XK4QBrpHziDR6EEZg5VsqNpVo": {
+      "name": "Alameda Staking #3",
+      "tag": "flagged"
+    },
+    "6ZRCB7AAqGre6c72PRz3MHLC73VMYvJ8bi9KHf1HFpNk": {
+      "name": "FTX",
+      "tag": "flagged"
+    },
+    "6b4aypBhH337qSzzkbeoHWzTLt4DjG2aG8GkrrTQJfQA": {
+      "name": "FTX Cold Storage #1",
+      "tag": "flagged"
+    },
+    "9uyDy9VDBw4K7xoSkhmCAm8NAFCwu4pkF6JeHUCtVKcX": {
+      "name": "FTX Cold Storage #2",
+      "tag": "flagged"
+    },
+    "6wEMcwrcF5AP9jpHWQcPxHXciWA2g217Qq81CTWjbgBw": {
+      "name": "FTX Cold Storage #3",
+      "tag": "flagged"
+    },
+    "JBpj7yp4Afvb71TmanVwJZXGeX4kqbGFvjCFCRo3EbTM": {
+      "name": "FTX.US",
+      "tag": "flagged"
+    },
+    "BUYgBfavHoGbfGYseyTWpzqKNeeYFjoJsgxiQcH4in4v": {
+      "name": "Ansem Impersonator",
+      "tag": "hacker"
+    },
+    "DCQATk3kKtf2cVns52eYMK5jopyNrUgVBNTaodGSZ6pp": {
+      "name": "Bridge Exploiter #1",
+      "tag": "hacker"
+    },
+    "2iLuEtoyaCM1Pin7PSMeKGnjFCVtcm3yyosB3gf4op8i": {
+      "name": "Bridge Exploiter #2",
+      "tag": "hacker"
+    },
+    "2BPvvKxu2KvpQU82B1xoe8rHxsbRXCpV9jQYtrNUtkH9": {
+      "name": "Gotbit Exploiter",
+      "tag": "hacker"
+    },
+    "Esmx2QjmDZMjJ15yBJ2nhqisjEt7Gqro4jSkofdoVsvY": {
+      "name": "Hacker (Crema Finance Exploit)",
+      "tag": "hacker"
+    },
+    "76w4SBe2of2wWUsx2FjkkwD29rRznfvEkBa1upSbTAWH": {
+      "name": "Hacker (Nirvana Finance Exploit)",
+      "tag": "hacker"
+    },
+    "Htp9MGP8Tig923ZFY7Qf2zzbMUmYneFRAhSp7vSg4wxV": {
+      "name": "Hacker's wallet 1",
+      "tag": "hacker"
+    },
+    "CEzN7mqP9xoxn2HdyW6fjEJ73t7qaX9Rp2zyS6hb3iEu": {
+      "name": "Hacker's wallet 2",
+      "tag": "hacker"
+    },
+    "5WwBYgQG6BdErM2nNNyUmQXfcUnB68b6kesxBywh1J3n": {
+      "name": "Hacker's wallet 3",
+      "tag": "hacker"
+    },
+    "GeEccGJ9BEzVbVor1njkBCCiqXJbXVeDHaXDCrBDbmuy": {
+      "name": "Hacker's wallet 4",
+      "tag": "hacker"
+    },
+    "9WArrPQyZ4HovjoUjYbvtJtbrfJNzQWCBk5k75w6NpEb": {
+      "name": "Hadeswap Exploiter",
+      "tag": "hacker"
+    },
+    "yUJw9a2PyoqKkH47i4yEGf4WXomSHMiK7Lp29Xs2NqM": {
+      "name": "Mango Markets Exploiter's Account",
+      "tag": "hacker"
+    },
+    "8iZYbAhpEYmp6whb4pCWnNhQYr32dg4R62Z9sVhsBg6w": {
+      "name": "Presale Scammer #1",
+      "tag": "hacker"
+    },
+    "9FFujzVqCgUC69x5rKwc47hQwjQZ1T4spuRP6tWHgpn4": {
+      "name": "Pundu presale scammer",
+      "tag": "hacker"
+    },
+    "gYs5v8LBaTNRFhU8rSSFeEqaCQPjmkT28naAN711111": {
+      "name": "Rainbow Drainer",
+      "tag": "hacker"
+    },
+    "AgJddDJLt17nHyXDCpyGELxwsZZQPqfUsuwzoiqVGJwD": {
+      "name": "Raydium LP Exploiter's Account",
+      "tag": "hacker"
+    },
+    "5B62qV4fmUqynvxJVQYuZHr6nTP8c3umFmzLjiJg5aa1": {
+      "name": "Robox.fi Exploiter 1",
+      "tag": "hacker"
+    },
+    "Ew12E9WjFTv7HPoJnzJzFQJJzAEtQkStYsQrbXkPRkgu": {
+      "name": "Robox.fi Exploiter 2",
+      "tag": "hacker"
+    },
+    "YSjzzLaTJiPDRBoc9KJ16Jfgz4EFtV9EE3xDYCUxhWb": {
+      "name": "Saga Tool Exploiter",
+      "tag": "hacker"
+    },
+    "8Dga8pKG22APohrgkUpxXHawkMJT7Vj5cUquuEjHTE5i": {
+      "name": "Side Presale Scammer",
+      "tag": "hacker"
+    },
+    "61wJT43nWMUpDR92wC7pmo6xoJRh2s4kCYRBq4d5XQHZ": {
+      "name": "Solend Exploiter's Account",
+      "tag": "hacker"
+    },
+    "FQvjem54YLLU5AdP5wz78vDQrUpFaJNuAk5AdpRiEfjr": {
+      "name": "Trezor Compromise Wallet",
+      "tag": "hacker"
+    },
+    "35wiSXzUDkN6vbxoNT7ARVVQduVRbSP4kVQnXbAcvhnM": {
+      "name": "TurtleNFT Exploiter",
+      "tag": "hacker"
+    },
+    "EAUwikTgqeHKJMaqDj17Cwb6TH3XzcXbxHSN7etGzMFt": {
+      "name": "Wormhole Exploiter",
+      "tag": "hacker"
+    },
+    "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH": {
+      "name": " Drift V2 Program",
+      "tag": "program"
+    },
+    "BBbD1WSjbHKfyE3TSFWF6vx1JV51c8msKSQy4ess6pXp": {
+      "name": "Allbridge Classic Bridge",
+      "tag": "program"
+    },
+    "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL": {
+      "name": "Associated Token Account Program",
+      "tag": "program"
+    },
+    "TokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL": {
+      "name": "Associated Token Program",
+      "tag": "program"
+    },
+    "ComputeBudget111111111111111111111111111111": {
+      "name": "Compute Budget",
+      "tag": "program"
+    },
+    "JCNCMFXo5M5qwUPg2Utu1u6YWp3MbygxqBsBeXXJfrw": {
+      "name": "Drift Vault",
+      "tag": "program"
+    },
+    "JUP6i4ozu5ydDCnLiMogSckDPpbtr7BJ4FtzYWkb5Rk": {
+      "name": "Jupiter Aggregator v1",
+      "tag": "program"
+    },
+    "JUP2jxvXaqu7NQY1GmNF4m1vodw12LVXYxbFL2uJvfo": {
+      "name": "Jupiter Aggregator v2",
+      "tag": "program"
+    },
+    "JUP3c2Uh3WA4Ng34tw6kPd2G4C5BB21Xo36Je1s32Ph": {
+      "name": "Jupiter Aggregator v3",
+      "tag": "program"
+    },
+    "JUP4Fb2cqiRUcaTHdrPC8h2gNsA2ETXiPDD33WcGuJB": {
+      "name": "Jupiter Aggregator v4",
+      "tag": "program"
+    },
+    "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4": {
+      "name": "Jupiter Aggregator v6",
+      "tag": "program"
+    },
+    "EXJHiMkj6NRFDfhWBMKccHNwdSpCT7tdvQeRf87yHm6T": {
+      "name": "Jupiter Community Cold Wallet",
+      "tag": "program"
+    },
+    "FVhQ3QHvXudWSdGix2sdcG47YmrmUxRhf3KCBmiKfekf": {
+      "name": "Jupiter Community Hot Wallet",
+      "tag": "program"
+    },
+    "DCA265Vj8a9CEuX1eb1LWRnDT7uK6q1xMipnNyatn23M": {
+      "name": "Jupiter DCA program",
+      "tag": "program"
+    },
+    "GovaE4iu227srtG2s3tZzB4RmWBzw8sTwrCLZz7kN7rY": {
+      "name": "Jupiter Governance Program",
+      "tag": "program"
+    },
+    "PERPHjGBqRHArX4DySjwM6UJHiR3sWAatqfdBS2qQJu": {
+      "name": "Jupiter Labs Perpetuals",
+      "tag": "program"
+    },
+    "jupoNjAxXgZ4rjzxzPMP4oxduvQsQtZzyknqvzYNrNu": {
+      "name": "Jupiter Limit Order",
+      "tag": "program"
+    },
+    "45ruCyfdRkWpRNGEqWzjCiXRHkZs8WXCLQ67Pnpye7Hp": {
+      "name": "Jupiter Platform Fee",
+      "tag": "program"
+    },
+    "61aq585V8cR2sZBeawJFt2NPqmN7zDi1sws4KLs5xHXV": {
+      "name": "Jupiter Team Cold Wallet",
+      "tag": "program"
+    },
+    "CbU4oSFCk8SVgW23NLvb5BwctvWcZZHfxRD6HudP8gAo": {
+      "name": "Jupiter Team Hot Wallet",
+      "tag": "program"
+    },
+    "CrX7kMhLC3cSsXJdT7JDgqrRVWGnUpX3gfEfxxU2NVLi": {
+      "name": "Lido for Solana",
+      "tag": "program"
+    },
+    "EewxydAPCCVuNEyrVN68PuSYdQ7wKn27V9Gjeoi8dy3S": {
+      "name": "Lifinity Swap",
+      "tag": "program"
+    },
+    "2wT8Yq49kHgDzXuPxZSaeLaH1qbmGXtEyPy64bL7aD3c": {
+      "name": "Lifinity Swap V2",
+      "tag": "program"
+    },
+    "GqTPL6qRf5aUuqscLh8Rg2HTxPUXfhhAXDptTLhp1t2J": {
+      "name": "Mango Governance",
+      "tag": "program"
+    },
+    "7sPptkymzvayoSbLXzBsXEF8TSf3typNnAWkrKrDizNb": {
+      "name": "Mango ICO",
+      "tag": "program"
+    },
+    "JD3bq9hGdy38PuWQ4h2YJpELmHVGPPfFSuFkpzAd9zfu": {
+      "name": "Mango Markets V1",
+      "tag": "program"
+    },
+    "5fNfvyp5czQVX77yoACa3JJVEhdRaWjPuazuWgjhTqEH": {
+      "name": "Mango Markets V2",
+      "tag": "program"
+    },
+    "mv3ekLzLbnVPNxjSKvqBpU3ZeZXPQdEC3bp5MDEBG68": {
+      "name": "Mango Markets V3",
+      "tag": "program"
+    },
+    "4MangoMjqJ2firMokCjjGgoK8d4MXcrgL7XJaL3w6fVg": {
+      "name": "Mango Markets V4",
+      "tag": "program"
+    },
+    "94oHQMrCECP266YUoQmDvgVwafZApP9KAseMyNtjAPP7": {
+      "name": "MangoRiskCheck",
+      "tag": "program"
+    },
+    "MarBmsSgKXdrN1egZf5sqe1TMai9K1rChYNDJgjq7aD": {
+      "name": "Marinade Finance",
+      "tag": "program"
+    },
+    "ex9CfkBZZd6Nv9XdnoDmmB45ymbu4arXVk7g5pWnt3N": {
+      "name": "Marinade Native 1",
+      "tag": "program"
+    },
+    "stWirqFCf2Uts1JBL1Jsd3r6VBWhgnpdPxCTe1MFjrq": {
+      "name": "Marinade Native 2",
+      "tag": "program"
+    },
+    "MR2LqxoSbw831bNy68utpu5n4YqBH3AzDmddkgk9LQv": {
+      "name": "Marinade Staking",
+      "tag": "program"
+    },
+    "B56RWQGf9RFw7t8gxPzrRvk5VRmB5DoF94aLoJ25YtvG": {
+      "name": "Marinade Treasury #1",
+      "tag": "program"
+    },
+    "J5BEceL5z1EQ7JBqEFu4BfPN4PYCeQaW3GXrzXFfCzhs": {
+      "name": "Marinade Treasury #2",
+      "tag": "program"
+    },
+    "Memo1UhkJRfHyvLMcVucJwxXeuD728EqVDDwQDxFMNo": {
+      "name": "Memo Program",
+      "tag": "program"
+    },
+    "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr": {
+      "name": "Memo Program v2",
+      "tag": "program"
+    },
+    "LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo": {
+      "name": "Meteora DLMM Program",
+      "tag": "program"
+    },
+    "Eo7WjKq67rjJQSZxS6z3YkapzY3eMj6Xy8X5EQVn5UaB": {
+      "name": "Meteora Pools Program",
+      "tag": "program"
+    },
+    "24Uqj9JCLxUeoC3hGfh5W3s9FM9uCHDS2SG3LYwBpyTi": {
+      "name": "Meteora Vault Program",
+      "tag": "program"
+    },
+    "whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc": {
+      "name": "Orca",
+      "tag": "program"
+    },
+    "82yxjeMsvaURa4MbZZ7WZZHfobirZYkH1zF8fmeGtyaQ": {
+      "name": "Orca Aquafarm",
+      "tag": "program"
+    },
+    "DjVE6JNiYqPL2QXyCUUh8rNjHrbz9hXHNYt99MQ59qw1": {
+      "name": "Orca Token Swap",
+      "tag": "program"
+    },
+    "9W959DqEETiGZocYWCQPaJ6sBmUzgfxXfqGeTEdp3aQP": {
+      "name": "Orca Token Swap V2",
+      "tag": "program"
+    },
+    "routeUGWgWzqBWFcrCfv8tritsqukccJPu3q5GPP3xS": {
+      "name": "Raydium AMM Routing",
+      "tag": "program"
+    },
+    "5Q544fKrFoe6tsEbD7S8EmxGTJYAKtTVhAW5Q5pge4j1": {
+      "name": "Raydium Authority V4",
+      "tag": "program"
+    },
+    "CPK8fQYShAmERZmysQRAGWPvV5qs3AvazQsiR9ctC6ED": {
+      "name": "Raydium CLAMM LP",
+      "tag": "program"
+    },
+    "CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK": {
+      "name": "Raydium Concentrated Liquidity",
+      "tag": "program"
+    },
+    "9HzJyW1qZsEiSfMUf6L2jo3CcTKAyBmSyKdwQeYisHrC": {
+      "name": "Raydium IDO",
+      "tag": "program"
+    },
+    "RVKd61ztZW9GUwhRbbLoYVRE5Xf1B2tVscKqwZqXgEr": {
+      "name": "Raydium Liquidity Pool V2",
+      "tag": "program"
+    },
+    "27haf8L6oxUeXrHrgEgsexjSY5hbVUWEmvv9Nyxg8vQv": {
+      "name": "Raydium Liquidity Pool V3",
+      "tag": "program"
+    },
+    "675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8": {
+      "name": "Raydium Liquidity Pool V4",
+      "tag": "program"
+    },
+    "EhhTKczWMGQt46ynNeRX1WfeagwwJd7ufHvCDjRxjo5Q": {
+      "name": "Raydium Stake",
+      "tag": "program"
+    },
+    "CBuCnLe26faBpcBP2fktp4rp8abpcAnTWft6ZrP5Q4T": {
+      "name": "Raydium Stake V4",
+      "tag": "program"
+    },
+    "9KEPoZmtHUrBbhWN1v1KWLMkkvwY6WLtAVUCPRtRjP4z": {
+      "name": "Raydium Stake V5",
+      "tag": "program"
+    },
+    "FarmqiPv5eAj3j1GMdMCMUGXqPUvmquZtMy86QH6rzhG": {
+      "name": "Raydium ecosystem farm ",
+      "tag": "program"
+    },
+    "5quBtoiQqxF9Jv6KYKctB59NT3gtJD2Y65kdnB1Uev3h": {
+      "name": "Raydium liquidity pool AMM",
+      "tag": "program"
+    },
+    "So1endDq2YkqhipRh3WViPa8hdiSpxWy6z3Z6tMCpAo": {
+      "name": "Solend Protocol",
+      "tag": "program"
+    },
+    "11111111111111111111111111111111": {
+      "name": "System Program",
+      "tag": "program"
+    },
+    "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA": {
+      "name": "Token Program",
+      "tag": "program"
+    },
+    "TLPv2tuSVvn3fSk8RgW3yPddkp5oFivzZV3rA9hQxtX": {
+      "name": "Tulip Protocol V2 Vaults",
+      "tag": "program"
+    },
+    "WormT3McKhFJ2RkiGpdw9GKvNCrB2aB54gb2uV9MfQC": {
+      "name": "Wormhole",
+      "tag": "program"
+    },
+    "worm2ZoG2kUd4vFXhvjh93UUH596ayRfgQ2MgjNMTth": {
+      "name": "Wormhole Core",
+      "tag": "program"
+    },
+    "WnFt12ZrnzZrFZkt2xsNsaNWoQribnuQ5B5FrDbwDhD": {
+      "name": "Wormhole NFT Bridge",
+      "tag": "program"
+    },
+    "wormDTUJ6AWPNvk59vGQbDvGJmqbDTdgWgAqcLBCgUb": {
+      "name": "Wormhole Token Bridge",
+      "tag": "program"
+    },
+    "ZETAxsqBRek56DhiGXrn75yj2NHU3aYUnxvHXpkf3aD": {
+      "name": "Zeta DEX",
+      "tag": "program"
+    },
+    "zDEXqXEG7gAyxb1Kg9mK5fPnUdENCGKzWrM21RMdWRq": {
+      "name": "Zeta Program",
+      "tag": "program"
+    },
+    "DEbrdGj3HsRsAzx6uH4MKyREKxVAfBydijLUF3ygsFfh": {
+      "name": "deBridge",
+      "tag": "program"
+    },
+    "DeSetTwWhjZq6Pz9Kfdo1KoS5NqtsM6G8ERbX4SSCSft": {
+      "name": "deBridge Settings",
+      "tag": "program"
+    },
+    "So11111111111111111111111111111111111111112": {
+      "name": "SOL",
+      "tag": "token"
+    },
+    "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v": {
+      "name": "USDC",
+      "tag": "token"
+    },
+    "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB": {
+      "name": "USDT",
+      "tag": "token"
+    }
+  }
+}

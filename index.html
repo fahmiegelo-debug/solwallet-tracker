@@ -429,15 +429,13 @@
       letter-spacing: 0.04em;
     }
     .tag-bundler { background: rgba(255, 167, 38, 0.15); color: var(--warn); border: 1px solid rgba(255, 167, 38, 0.3); }
-    .tag-funder  { background: rgba(94, 170, 255, 0.15); color: var(--info); border: 1px solid rgba(94, 170, 255, 0.3); }
+    .tag-funder  { background: rgba(255, 167, 38, 0.10); color: var(--warn); border: 1px solid rgba(255, 167, 38, 0.25); }
     .tag-cex     { background: rgba(255, 110, 199, 0.15); color: var(--pink); border: 1px solid rgba(255, 110, 199, 0.3); }
-    .tag-rug     { background: rgba(255, 77, 109, 0.15); color: var(--danger); border: 1px solid rgba(255, 77, 109, 0.3); }
-    .tag-target  { background: rgba(20, 241, 149, 0.15); color: var(--accent); border: 1px solid rgba(20, 241, 149, 0.3); }
-    .tag-cluster { background: rgba(153, 69, 255, 0.15); color: var(--accent-2); border: 1px solid rgba(153, 69, 255, 0.3); }
-    .tag-mev     { background: rgba(255, 213, 79, 0.15); color: #ffd54f; border: 1px solid rgba(255, 213, 79, 0.3); }
-    .tag-protocol{ background: rgba(167, 139, 250, 0.15); color: #a78bfa; border: 1px solid rgba(167, 139, 250, 0.3); }
-    .tag-system  { background: rgba(94, 103, 125, 0.15); color: var(--text-2); border: 1px solid rgba(94, 103, 125, 0.3); }
+    .tag-hacker  { background: rgba(255, 77, 109, 0.20); color: var(--danger); border: 1px solid rgba(255, 77, 109, 0.4); }
+    .tag-flagged { background: rgba(255, 77, 109, 0.20); color: var(--danger); border: 1px solid rgba(255, 77, 109, 0.4); }
     .tag-drain   { background: rgba(255, 77, 109, 0.15); color: var(--danger); border: 1px solid rgba(255, 77, 109, 0.3); }
+    .tag-target  { background: rgba(20, 241, 149, 0.15); color: var(--accent); border: 1px solid rgba(20, 241, 149, 0.3); }
+    .tag-infra   { background: rgba(94, 103, 125, 0.15); color: var(--text-2); border: 1px solid rgba(94, 103, 125, 0.3); }
 
     .insights {
       display: flex;
@@ -589,9 +587,8 @@
         <button class="btn btn-ghost" id="btn-clear">Clear</button>
       </div>
       <div class="header-quick">
-        <button class="quick-btn" data-addr="3LKZU3iQcWN6jdfxRsLT5p2ezk9PzaCjVouvY3FhJW5T">Demo: Bundler</button>
-        <button class="quick-btn" data-addr="7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU">Demo: CEX</button>
-        <button class="quick-btn" data-addr="5Q544fKrFoe6tsEbD7S8EmxGTJYAKtTVhAW5Q5pge4j1">Demo: Rugger</button>
+        <button class="quick-btn" data-addr="9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM" title="Binance 3 — verified CEX hot wallet">Try: Binance 3</button>
+        <button class="quick-btn" data-addr="2ojv9BAiHUrvsm9gxDe7fJSzbNZSJcxZvf8dqmWGHG8S" title="Binance 1 — verified CEX hot wallet">Try: Binance 1</button>
       </div>
     </header>
 
@@ -601,12 +598,12 @@
         <div class="empty-icon">🕸️</div>
         <div class="empty-title">Trace any Solana wallet</div>
         <div class="empty-sub">
-          Paste a wallet address. We'll map its inflow / outflow connections, identify bundler clusters, common funders, and money flow patterns. Like Arkham, but cleaner.
+          Paste a wallet address. We map its inflow/outflow connections and detect bundler clusters — wallets that funded the target in tight burst windows. Real on-chain data via public Solana RPC.
         </div>
         <div class="empty-hints">
-          <button class="empty-hint" data-addr="3LKZU3iQcWN6jdfxRsLT5p2ezk9PzaCjVouvY3FhJW5T"><span class="label">Try:</span>Bundler cluster</button>
-          <button class="empty-hint" data-addr="7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU"><span class="label">Try:</span>CEX hot wallet</button>
-          <button class="empty-hint" data-addr="5Q544fKrFoe6tsEbD7S8EmxGTJYAKtTVhAW5Q5pge4j1"><span class="label">Try:</span>Memecoin rugger</button>
+          <button class="empty-hint" data-addr="9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM"><span class="label">Try:</span>Binance 3 (CEX hot wallet)</button>
+          <button class="empty-hint" data-addr="2ojv9BAiHUrvsm9gxDe7fJSzbNZSJcxZvf8dqmWGHG8S"><span class="label">Try:</span>Binance 1 (CEX hot wallet)</button>
+          <button class="empty-hint" data-addr="H8sMJSCQxfKiFTCfDR3DUMLPwcRbM61LGFJ8N4dK3WjS"><span class="label">Try:</span>Coinbase 1</button>
         </div>
       </div>
       <div class="graph-status" id="graph-status">
@@ -622,13 +619,12 @@
       <div class="graph-legend" id="graph-legend" style="display: none">
         <div class="legend-title">Legend</div>
         <div class="legend-row"><span class="legend-dot" style="background: #14f195"></span> Target wallet</div>
+        <div class="legend-row"><span class="legend-dot" style="background: #ffa726"></span> Bundler / funder</div>
+        <div class="legend-row"><span class="legend-dot" style="background: #ff4d6d"></span> Drain / hacker / flagged</div>
+        <div class="legend-row"><span class="legend-dot" style="background: #ff6ec7"></span> CEX hot wallet</div>
         <div class="legend-row"><span class="legend-dot" style="background: #5eaaff"></span> Inflow source</div>
         <div class="legend-row"><span class="legend-dot" style="background: #9945ff"></span> Outflow recipient</div>
-        <div class="legend-row"><span class="legend-dot" style="background: #ffa726"></span> Likely bundler / funder</div>
-        <div class="legend-row"><span class="legend-dot" style="background: #ff6ec7"></span> CEX hot wallet</div>
-        <div class="legend-row"><span class="legend-dot" style="background: #ffd54f"></span> Jito tip / MEV infra</div>
-        <div class="legend-row"><span class="legend-dot" style="background: #a78bfa"></span> Protocol / DEX</div>
-        <div class="legend-row"><span class="legend-dot" style="background: #ff4d6d"></span> Suspicious / drain</div>
+        <div class="legend-row"><span class="legend-dot" style="background: #5e677d"></span> Known infrastructure</div>
       </div>
     </main>
 
